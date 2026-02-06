@@ -52,7 +52,7 @@ export default function Home({ telegramId }) {
       <header style={{ marginBottom: 16 }}>
         <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>MoneyTask777</h1>
         <p style={{ margin: '4px 0 0', fontSize: 13, opacity: 0.8 }}>
-          Мини‑приложение для заработка на заданиях
+          Мини‑приложение для заработка денег на заданиях
         </p>
       </header>
 
