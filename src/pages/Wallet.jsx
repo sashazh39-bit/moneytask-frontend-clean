@@ -31,6 +31,7 @@ export default function Wallet({ telegramId }) {
       setUser(u);
       setHistory(h);
     } catch (e) {
+      // ВРЕМЕННО без alert, чтобы не мешал
       alert('Ошибка загрузки кошелька: ' + e.message);
     } finally {
       setLoading(false);
