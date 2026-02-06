@@ -4,7 +4,7 @@ import Home from './pages/home';
 import Tasks from './pages/Tasks';
 import Wallet from './pages/Wallet';
 import Withdrawals from './pages/Withdrawals';
-import Info from './pages/Info';
+import info from './pages/info';
 import TabBar from './components/TabBar';
 import { useTelegramUser } from './hooks/useTelegramUser';
 
