@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { apiGet, apiPost } from '../api/client';
 
 export default function Tasks({ telegramId }) {
   const [tasks, setTasks] = useState([]);
@@ -9,10 +8,45 @@ export default function Tasks({ telegramId }) {
   const loadTasks = async () => {
     try {
       setLoading(true);
-      const data = await apiGet(`/tasks/user/${telegramId}`);
-      setTasks(data);
+
+      // ВРЕМЕННАЯ ЗАГЛУШКА — НЕТ запросов на backend
+      // Фейковый список заданий
+      const mockTasks = [
+        {
+          key: 'subscribe_telegram',
+          title: 'Подписаться на Telegram-канал',
+          description: 'Подпишитесь на наш канал и получите вознаграждение',
+          reward: 50,
+          type: 'link',
+          link: 'https://t.me/yourchannel',
+          completed: false,
+          isSecret: false,
+        },
+        {
+          key: 'invite_3_friends',
+          title: 'Пригласить 3 друзей',
+          description: 'Пригласите минимум 3 друзей в бот',
+          reward: 100,
+          type: 'referral',
+          targetCount: 3,
+          progress: { current: 0, target: 3 },
+          completed: false,
+          isSecret: false,
+        },
+        {
+          key: 'secret_bonus',
+          title: 'Секретное задание',
+          description: 'Выполните секретное задание для получения бонуса',
+          reward: 200,
+          type: 'secret',
+          completed: false,
+          isSecret: true,
+        },
+      ];
+
+      setTasks(mockTasks);
     } catch (e) {
-      alert('Ошибка загрузки заданий: ' + e.message);
+      console.error('Ошибка загрузки заданий:', e);
     } finally {
       setLoading(false);
     }
@@ -25,21 +59,31 @@ export default function Tasks({ telegramId }) {
   const handleComplete = async (key) => {
     try {
       setBusyKey(key);
-      const res = await apiPost(`/tasks/${key}/complete`, { telegramId });
-      alert(res.message + ` Новый баланс: ${res.newBalance} ₽`);
-      await loadTasks();
+
+      // ВРЕМЕННАЯ ЗАГЛУШКА — симуляция выполнения
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Найти задание и отметить как выполненное
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.key === key ? { ...t, completed: true } : t
+        )
+      );
+
+      alert('Задание выполнено! +' + tasks.find((t) => t.key === key)?.reward + ' ₽');
     } catch (e) {
-      // ВРЕМЕННО без alert, чтобы не мешал
-      alert('Ошибка выполнения: ' + e.message);
+      console.error('Ошибка выполнения задания:', e);
+      alert('Не удалось выполнить задание');
     } finally {
       setBusyKey(null);
     }
   };
 
-  if (loading) return <div style={{ padding: 16 }}>Загрузка...</div>;
+  if (loading)
+    return <div style={{ padding: 16, color: '#fff' }}>Загрузка...</div>;
 
   return (
-    <div style={{ padding: 16, paddingBottom: 80 }}>
+    <div style={{ padding: 16, paddingBottom: 80, color: '#fff' }}>
       <h2>Задания</h2>
       {tasks.length === 0 && <p>Пока нет доступных заданий.</p>}
 
