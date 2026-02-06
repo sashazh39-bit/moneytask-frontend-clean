@@ -1,34 +1,70 @@
+// src/pages/Home.jsx
 import { useEffect, useState } from 'react';
-import { apiGet } from '../api/client';
+import { apiGet, apiPost } from '../api/client';
 
-export default function Home({ telegramId }) {
+export default function Home({ telegramId, userFromInit }) {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // текст ошибки вместо alert
+  const [error, setError] = useState(null);
+
+  const createUserIfNeeded = async () => {
+    if (!telegramId) return;
+
+    // данные для создания из Telegram initData
+    const payload = {
+      telegramId,
+      username: userFromInit?.username || '',
+      firstName: userFromInit?.firstName || userFromInit?.first_name || '',
+      lastName: userFromInit?.lastName || userFromInit?.last_name || '',
+    };
+
+    try {
+      const created = await apiPost('/api/users', payload);
+      setUser(created);
+      return created;
+    } catch (e) {
+      console.error('Ошибка создания пользователя', e);
+      throw e;
+    }
+  };
 
   const load = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // если телеграм-айди не пришел, сразу показываем сообщение
       if (!telegramId) {
-        setError('Не удалось получить данные Telegram. Попробуйте перезапустить мини‑приложение.');
-        setLoading(false);
+        setError(
+          'Не удалось получить данные Telegram. Откройте приложение через кнопку "Открыть" в боте.'
+        );
         return;
       }
 
-      const [u, s] = await Promise.all([
-        apiGet(`/api/users/${telegramId}`),
-        apiGet('/api/statistics/global'),
-      ]);
+      let u = null;
+
+      try {
+        // пробуем получить пользователя
+        u = await apiGet(`/api/users/${telegramId}`);
+      } catch (e) {
+        console.error('Ошибка загрузки пользователя:', e);
+        // если backend вернул "Пользователь не найден" — создаем
+        if (e.message?.includes('не найден')) {
+          u = await createUserIfNeeded();
+        } else {
+          throw e;
+        }
+      }
+
+      const s = await apiGet('/api/statistics/global');
 
       setUser(u);
       setStats(s);
     } catch (e) {
       console.error(e);
-      setError('Не удалось загрузить данные. Проверьте подключение к интернету и попробуйте позже.');
+      setError(
+        'Не удалось загрузить данные. Проверьте интернет или попробуйте позже.'
+      );
     } finally {
       setLoading(false);
     }
@@ -36,7 +72,7 @@ export default function Home({ telegramId }) {
 
   useEffect(() => {
     load();
-  }, []);
+  }, [telegramId]);
 
   return (
     <div
@@ -107,6 +143,7 @@ export default function Home({ telegramId }) {
             Всего заработано: {user.totalEarned} ₽
           </div>
 
+          {/* Кнопку лучше привяжем к смене таба позже через проп, сейчас просто визуал */}
           <button
             style={{
               marginTop: 12,
