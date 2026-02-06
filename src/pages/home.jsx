@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { apiGet } from '../api/client';
 
 export default function Home({ telegramId }) {
   const [user, setUser] = useState(null);
@@ -8,27 +9,14 @@ export default function Home({ telegramId }) {
   const load = async () => {
     try {
       setLoading(true);
-
-      // ВРЕМЕННАЯ ЗАГЛУШКА — НЕТ запросов на backend
-      setUser({
-        firstName: 'Тест',
-        username: 'testuser',
-        telegramId: telegramId || 1,
-        balance: 250,
-        totalEarned: 700,
-      });
-
-      setStats({
-        onlineUsers: 0,
-        daysOnline: 2,
-        totalUsers: 14,
-        totalWithdrawals: 3,
-        totalPaidOut: 1100,
-        averageProcessingMinutes: 2,
-      });
+      const [u, s] = await Promise.all([
+        apiGet(`/users/${telegramId}`),
+        apiGet('/statistics/global'),
+      ]);
+      setUser(u);
+      setStats(s);
     } catch (e) {
-      // ВРЕМЕННО без alert, чтобы не мешал
-      console.error('Home load error:', e);
+      alert('Ошибка загрузки главной: ' + e.message);
     } finally {
       setLoading(false);
     }
@@ -38,10 +26,10 @@ export default function Home({ telegramId }) {
     load();
   }, []);
 
-  if (loading) return <div style={{ padding: 16, color: '#fff' }}>Загрузка...</div>;
+  if (loading) return <div style={{ padding: 16 }}>Загрузка...</div>;
 
   return (
-    <div style={{ padding: 16, color: '#fff' }}>
+    <div style={{ padding: 16 }}>
       <h1 style={{ marginBottom: 8 }}>MoneyTask</h1>
       {user && (
         <p style={{ marginTop: 0 }}>
@@ -58,7 +46,7 @@ export default function Home({ telegramId }) {
             background: 'linear-gradient(135deg,#1e3c72,#2a5298)',
           }}
         >
-          <div>Баланс</div>
+          <div>Балааанс</div>
           <div style={{ fontSize: 32, fontWeight: 700 }}>
             {user.balance} ₽
           </div>
