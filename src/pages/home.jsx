@@ -30,7 +30,7 @@ export default function Home({ telegramId }) {
 
   return (
     <div style={{ padding: 16 }}>
-      <h1 style={{ marginBottom: 8 }}>MoneyTask</h1>
+      <h1 style={{ marginBottom: 8 }}>MoneyTask777</h1>
       {user && (
         <p style={{ marginTop: 0 }}>
           Привет, <strong>{user.firstName || user.username || user.telegramId}</strong>!
