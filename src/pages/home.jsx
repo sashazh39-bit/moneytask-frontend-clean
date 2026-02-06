@@ -20,8 +20,8 @@ export default function Home({ telegramId }) {
       }
 
       const [u, s] = await Promise.all([
-        apiGet(`/users/${telegramId}`),
-        apiGet('/statistics/global'),
+        apiGet(`/api/users/${telegramId}`),
+        apiGet('/api/statistics/global'),
       ]);
 
       setUser(u);
