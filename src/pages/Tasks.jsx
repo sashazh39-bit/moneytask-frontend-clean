@@ -1,3 +1,4 @@
+// src/pages/Tasks.jsx
 import { useEffect, useState } from 'react';
 import { apiGet, apiPost } from '../api/client';
 
@@ -7,10 +8,10 @@ export default function Tasks({ telegramId }) {
   const [busyKey, setBusyKey] = useState(null);
 
   const loadTasks = async () => {
+    if (!telegramId) return;
     try {
       setLoading(true);
-      const data = await apiGet(`/api/tasks/user/${telegramId}`)
-;
+      const data = await apiGet(`/api/tasks/user/${telegramId}`);
       setTasks(data);
     } catch (e) {
       alert('Ошибка загрузки заданий: ' + e.message);
@@ -21,12 +22,13 @@ export default function Tasks({ telegramId }) {
 
   useEffect(() => {
     loadTasks();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [telegramId]);
 
   const handleComplete = async (key) => {
     try {
       setBusyKey(key);
-      const res = await apiPost(`/tasks/${key}/complete`, { telegramId });
+      const res = await apiPost(`/api/tasks/${key}/complete`, { telegramId });
       alert(res.message + ` Новый баланс: ${res.newBalance} ₽`);
       await loadTasks();
     } catch (e) {
@@ -36,11 +38,14 @@ export default function Tasks({ telegramId }) {
     }
   };
 
-  if (loading) return <div style={{ padding: 16 }}>Загрузка...</div>;
+  if (loading) {
+    return <div style={{ padding: 16 }}>Загрузка...</div>;
+  }
 
   return (
     <div style={{ padding: 16, paddingBottom: 80 }}>
       <h2>Задания</h2>
+
       {tasks.length === 0 && <p>Пока нет доступных заданий.</p>}
 
       {tasks.map((task) => (
