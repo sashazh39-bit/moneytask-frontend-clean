@@ -25,8 +25,8 @@ export default function Wallet({ telegramId }) {
     try {
       setLoading(true);
       const [u, h] = await Promise.all([
-        apiGet(`/users/${telegramId}`),
-        apiGet(`/withdrawals/user/${telegramId}`),
+        apiGet(`/api/users/${telegramId}`),
+        apiGet(`/api/withdrawals/user/${telegramId}`),
       ]);
       setUser(u);
       setHistory(h);
