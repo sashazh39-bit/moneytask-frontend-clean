@@ -16,6 +16,7 @@ export default function Withdrawals() {
       const data = await apiGet('/withdrawals/recent?limit=50');
       setItems(data);
     } catch (e) {
+      // ВРЕМЕННО без alert, чтобы не мешал
       alert('Ошибка загрузки выплат: ' + e.message);
     } finally {
       setLoading(false);
