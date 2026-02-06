@@ -29,6 +29,7 @@ export default function Tasks({ telegramId }) {
       alert(res.message + ` Новый баланс: ${res.newBalance} ₽`);
       await loadTasks();
     } catch (e) {
+      // ВРЕМЕННО без alert, чтобы не мешал
       alert('Ошибка выполнения: ' + e.message);
     } finally {
       setBusyKey(null);
