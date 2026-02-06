@@ -9,7 +9,8 @@ export default function Tasks({ telegramId }) {
   const loadTasks = async () => {
     try {
       setLoading(true);
-      const data = await apiGet(`/tasks/user/${telegramId}`);
+      const data = await apiGet(`/api/tasks/user/${telegramId}`)
+;
       setTasks(data);
     } catch (e) {
       alert('Ошибка загрузки заданий: ' + e.message);
