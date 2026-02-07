@@ -1,6 +1,6 @@
 // src/api/client.js
 
-const API_BASE = 'https://moneytask-https://moneytask-backend.onrender.com';
+const API_BASE = 'https://moneytask-backend.onrender.com';
 
 // GET запрос
 export async function apiGet(path) {
