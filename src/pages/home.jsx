@@ -20,7 +20,7 @@ export default function Home({ telegramId, userFromInit }) {
     };
 
     try {
-      const created = await apiPost('/api/users', payload);
+      const created = await apiPost('/api/users/register', payload);
       setUser(created);
       return created;
     } catch (e) {
