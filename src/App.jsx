@@ -4,7 +4,7 @@ import Home from './pages/home';
 import Tasks from './pages/Tasks';
 import Wallet from './pages/Wallet';
 import Withdrawals from './pages/Withdrawals';
-import info from './pages/info';
+import Info from './pages/Info';
 import TabBar from './components/TabBar';
 import { useTelegramUser } from './hooks/useTelegramUser';
 
@@ -35,7 +35,7 @@ function App() {
     tasks: <Tasks {...screenProps} />,
     wallet: <Wallet {...screenProps} />,
     withdrawals: <Withdrawals {...screenProps} />,
-    info: <info {...screenProps} />,
+    Info: <Info {...screenProps} />,
   };
 
   return (
