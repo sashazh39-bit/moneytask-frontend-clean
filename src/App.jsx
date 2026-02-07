@@ -1,4 +1,4 @@
-// src/App.jsx
+//app.jsx
 import { useState, useEffect } from 'react';
 import Home from './pages/home';
 import Tasks from './pages/Tasks';
