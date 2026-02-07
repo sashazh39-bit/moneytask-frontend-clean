@@ -35,7 +35,7 @@ function App() {
     tasks: <Tasks {...screenProps} />,
     wallet: <Wallet {...screenProps} />,
     withdrawals: <Withdrawals {...screenProps} />,
-    Info: <Info {...screenProps} />,
+    info: <Info {...screenProps} />,
   };
 
   return (
