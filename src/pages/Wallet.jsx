@@ -38,8 +38,10 @@ export default function Wallet({ telegramId }) {
   };
 
   useEffect(() => {
-    load();
-  }, []);
+  if (!telegramId) return;
+  load();
+  }, [telegramId]);
+
 
   const onSubmit = async (e) => {
     e.preventDefault();
