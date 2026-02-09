@@ -26,7 +26,7 @@ export default function Tasks({ telegramId, userFromInit }) {
       setLoading(true);
       const data = await apiGet(`/api/tasks/user/${telegramId}`);
 
-      // сортируем по заданному порядку
+      // сортируем по заданному порядкуу
       const withIndex = data.map((t) => ({
         ...t,
         _order: ORDER.indexOf(t.key),
