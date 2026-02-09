@@ -2,9 +2,10 @@
 import { useEffect, useState } from 'react';
 import { apiGet, apiPost } from '../api/client';
 
-const REF_BASE = 'https://t.me/ТВОЙ_БОТ_USERNAME?start='; // заменишь на своего бота
+// ссылка для рефералов
+const REF_BASE = 'https://t.me/ТВОЙ_БОТ_USERNAME?start='; // замени на username бота
 
-// порядок задач по ключам
+// порядок отображения задач
 const ORDER = [
   'tg_sub_1',
   'tg_sub_2',
@@ -18,7 +19,12 @@ export default function Tasks({ telegramId, userFromInit }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busyKey, setBusyKey] = useState(null);
-  const [openedKey, setOpenedKey] = useState(null); // какая менюшка открыта
+  const [openedKey, setOpenedKey] = useState(null);
+
+  // для заявки на репост
+  const [storyScreenshotUrl, setStoryScreenshotUrl] = useState('');
+  const [storyLink, setStoryLink] = useState('');
+  const [storySending, setStorySending] = useState(false);
 
   const loadTasks = async () => {
     if (!telegramId) return;
@@ -26,7 +32,7 @@ export default function Tasks({ telegramId, userFromInit }) {
       setLoading(true);
       const data = await apiGet(`/api/tasks/user/${telegramId}`);
 
-      // сортируем по заданному порядкуу
+      // сортировка по ORDER
       const withIndex = data.map((t) => ({
         ...t,
         _order: ORDER.indexOf(t.key),
@@ -53,6 +59,12 @@ export default function Tasks({ telegramId, userFromInit }) {
   const handleComplete = async (task) => {
     if (task.completed) return;
 
+    // репост обрабатывается через заявку, а не прямой complete
+    if (task.key === 'story_repost') {
+      alert('Для этого задания сначала отправь скриншот истории.');
+      return;
+    }
+
     try {
       setBusyKey(task.key);
       const res = await apiPost(`/api/tasks/${task.key}/complete`, { telegramId });
@@ -67,13 +79,36 @@ export default function Tasks({ telegramId, userFromInit }) {
   };
 
   const toggleOpen = (task) => {
-    if (task.completed) return; // выполненные не открываем
+    if (task.completed) return;
     setOpenedKey((prev) => (prev === task.key ? null : task.key));
   };
 
   const getReferralLink = () => {
     const code = telegramId || userFromInit?.username || '';
     return `${REF_BASE}${code}`;
+  };
+
+  const submitStoryRequest = async () => {
+    if (!storyScreenshotUrl.trim()) {
+      alert('Укажи ссылку на скриншот истории');
+      return;
+    }
+    try {
+      setStorySending(true);
+      const res = await apiPost('/api/story-repost/request', {
+        telegramId,
+        screenshotUrl: storyScreenshotUrl.trim(),
+        storyLink: storyLink.trim() || undefined,
+      });
+      alert(res.message || 'Заявка отправлена на модерацию');
+      setStoryScreenshotUrl('');
+      setStoryLink('');
+      setOpenedKey(null);
+    } catch (e) {
+      alert('Ошибка отправки заявки: ' + e.message);
+    } finally {
+      setStorySending(false);
+    }
   };
 
   if (loading) {
@@ -83,7 +118,6 @@ export default function Tasks({ telegramId, userFromInit }) {
   return (
     <div style={{ padding: 16, paddingBottom: 80 }}>
       <h2>Задания</h2>
-
       {tasks.length === 0 && <p>Пока нет доступных заданий.</p>}
 
       {tasks.map((task) => {
@@ -101,7 +135,7 @@ export default function Tasks({ telegramId, userFromInit }) {
               background: '#111',
             }}
           >
-            {/* верхняя часть */}
+            {/* верхняя строка */}
             <div
               style={{
                 display: 'flex',
@@ -116,7 +150,6 @@ export default function Tasks({ telegramId, userFromInit }) {
                   {task.title}
                 </h3>
 
-                {/* описание цели для рефералов */}
                 {task.type === 'referral' && task.targetCount && (
                   <p
                     style={{
@@ -129,7 +162,6 @@ export default function Tasks({ telegramId, userFromInit }) {
                   </p>
                 )}
 
-                {/* описание для рекламы */}
                 {task.type === 'ad' && task.targetCount && (
                   <p
                     style={{
@@ -138,12 +170,11 @@ export default function Tasks({ telegramId, userFromInit }) {
                       margin: '4px 0 0',
                     }}
                   >
-                    Можно посмотреть: {task.targetCount} раз, за каждый просмотр +
-                    {task.reward} ₽
+                    Можно посмотреть: {task.targetCount} раз, по {task.reward} ₽ за
+                    просмотр
                   </p>
                 )}
 
-                {/* универсальный прогресс, если есть */}
                 {task.progress && (
                   <p
                     style={{
@@ -168,7 +199,7 @@ export default function Tasks({ telegramId, userFromInit }) {
               </span>
             </div>
 
-            {/* кнопка "Выполнить"/"Выполнено" */}
+            {/* кнопка открыть / выполнено */}
             <div style={{ marginTop: 8 }}>
               {task.completed ? (
                 <button
@@ -209,7 +240,7 @@ export default function Tasks({ telegramId, userFromInit }) {
               )}
             </div>
 
-            {/* менюшка деталей */}
+            {/* раскрытая менюшка */}
             {isOpen && !task.completed && (
               <div
                 style={{
@@ -221,12 +252,10 @@ export default function Tasks({ telegramId, userFromInit }) {
                   fontSize: 13,
                 }}
               >
-                {/* общее описание, если есть */}
                 {task.description && (
                   <p style={{ margin: '0 0 8px' }}>{task.description}</p>
                 )}
 
-                {/* ссылка на канал / пост */}
                 {task.link && (
                   <a
                     href={task.link}
@@ -243,7 +272,7 @@ export default function Tasks({ telegramId, userFromInit }) {
                   </a>
                 )}
 
-                {/* спец-инструкция для репоста в истории */}
+                {/* спец-блок для репоста в истории */}
                 {task.key === 'story_repost' && (
                   <div
                     style={{
@@ -260,22 +289,84 @@ export default function Tasks({ telegramId, userFromInit }) {
                     </div>
                     <ol style={{ paddingLeft: 16, margin: 0 }}>
                       <li>Открой пост на нашем канале (кнопка выше).</li>
+                      <li>Нажми «Поделиться» → «Добавить в историю».</li>
+                      <li>Опубликуй историю у себя в Telegram.</li>
                       <li>
-                        Нажми «Поделиться» → «Добавить в историю» в Telegram.
+                        Сделай скриншот истории и загрузи его (Telegram‑облако,
+                        Imgur и т.п.).
                       </li>
-                      <li>Опубликуй историю у себя.</li>
-                      <li>
-                        После публикации вернись сюда и нажми кнопку «Выполнил».
-                      </li>
+                      <li>Вставь ссылку на скриншот ниже и отправь на проверку.</li>
                     </ol>
-                    <p style={{ marginTop: 6, opacity: 0.8 }}>
-                      При необходимости модерация может запросить скриншот
-                      истории.
-                    </p>
+
+                    <div style={{ marginTop: 8 }}>
+                      <label style={{ fontSize: 12 }}>
+                        Ссылка на скриншот истории *
+                      </label>
+                      <input
+                        type="text"
+                        value={storyScreenshotUrl}
+                        onChange={(e) =>
+                          setStoryScreenshotUrl(e.target.value)
+                        }
+                        placeholder="https://..."
+                        style={{
+                          width: '100%',
+                          marginTop: 4,
+                          padding: 6,
+                          borderRadius: 6,
+                          border: '1px solid #334155',
+                          background: '#020617',
+                          color: '#e5e7eb',
+                          fontSize: 12,
+                        }}
+                      />
+                    </div>
+
+                    <div style={{ marginTop: 8 }}>
+                      <label style={{ fontSize: 12 }}>
+                        Ссылка на историю / пост (необязательно)
+                      </label>
+                      <input
+                        type="text"
+                        value={storyLink}
+                        onChange={(e) => setStoryLink(e.target.value)}
+                        placeholder="https://t.me/..."
+                        style={{
+                          width: '100%',
+                          marginTop: 4,
+                          padding: 6,
+                          borderRadius: 6,
+                          border: '1px solid #334155',
+                          background: '#020617',
+                          color: '#e5e7eb',
+                          fontSize: 12,
+                        }}
+                      />
+                    </div>
+
+                    <button
+                      onClick={submitStoryRequest}
+                      disabled={storySending}
+                      style={{
+                        marginTop: 10,
+                        width: '100%',
+                        padding: 8,
+                        borderRadius: 8,
+                        border: 'none',
+                        background: '#22c55e',
+                        color: '#022c22',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {storySending
+                        ? 'Отправляем...'
+                        : 'Отправить на проверку'}
+                    </button>
                   </div>
                 )}
 
-                {/* блок для реферальных задач */}
+                {/* блок для рефералов */}
                 {task.type === 'referral' && (
                   <div
                     style={{
@@ -300,7 +391,7 @@ export default function Tasks({ telegramId, userFromInit }) {
                     </div>
                     <div style={{ fontSize: 12, opacity: 0.8 }}>
                       Делитесь ссылкой с друзьями. Как только условия будут
-                      выполнены, нажмите «Выполнил».
+                      выполнены, нажмите «Выполнено».
                     </div>
                   </div>
                 )}
@@ -308,29 +399,32 @@ export default function Tasks({ telegramId, userFromInit }) {
                 {/* пояснение для рекламы */}
                 {task.type === 'ad' && (
                   <p style={{ margin: '0 0 8px', fontSize: 12 }}>
-                    Нажимай «Выполнил» после каждого просмотра рекламного
+                    Нажимай «Выполнить» после каждого просмотра рекламного
                     ролика. Максимум {task.targetCount} просмотров, по{' '}
                     {task.reward} ₽ за каждый.
                   </p>
                 )}
 
-                <button
-                  onClick={() => handleComplete(task)}
-                  disabled={isBusy}
-                  style={{
-                    marginTop: 10,
-                    width: '100%',
-                    padding: 8,
-                    borderRadius: 8,
-                    border: 'none',
-                    background: '#22c55e',
-                    color: '#022c22',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {isBusy ? 'Проверяем...' : 'Выполнил'}
-                </button>
+                {/* универсальная кнопка, кроме story_repost */}
+                {task.key !== 'story_repost' && (
+                  <button
+                    onClick={() => handleComplete(task)}
+                    disabled={isBusy}
+                    style={{
+                      marginTop: 10,
+                      width: '100%',
+                      padding: 8,
+                      borderRadius: 8,
+                      border: 'none',
+                      background: '#22c55e',
+                      color: '#022c22',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {isBusy ? 'Проверяем...' : 'Выполнил'}
+                  </button>
+                )}
               </div>
             )}
           </div>
