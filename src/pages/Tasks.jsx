@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { apiGet, apiPost } from '../api/client';
 
-const REF_BASE = 'https://t.me/@moneytaskdemo_bot?start='; // замени на юзернейм бота
+const REF_BASE = 'https://t.me/ТВОЙ_БОТ_USERNAME?start='; // заменишь на своего бота
 
 // порядок задач по ключам
 const ORDER = [
@@ -10,7 +10,7 @@ const ORDER = [
   'tg_sub_2',
   'story_repost',
   'ref_10',
-  'ad_5',
+  'ad_view',
   'ref_25',
 ];
 
@@ -18,7 +18,7 @@ export default function Tasks({ telegramId, userFromInit }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busyKey, setBusyKey] = useState(null);
-  const [openedKey, setOpenedKey] = useState(null); // какая менюшка сейчас открыта
+  const [openedKey, setOpenedKey] = useState(null); // какая менюшка открыта
 
   const loadTasks = async () => {
     if (!telegramId) return;
@@ -26,7 +26,7 @@ export default function Tasks({ telegramId, userFromInit }) {
       setLoading(true);
       const data = await apiGet(`/api/tasks/user/${telegramId}`);
 
-      // сортируем по нашему ORDER, остальные в конец
+      // сортируем по заданному порядку
       const withIndex = data.map((t) => ({
         ...t,
         _order: ORDER.indexOf(t.key),
@@ -67,12 +67,11 @@ export default function Tasks({ telegramId, userFromInit }) {
   };
 
   const toggleOpen = (task) => {
-    if (task.completed) return; // выполненные больше не открываем
+    if (task.completed) return; // выполненные не открываем
     setOpenedKey((prev) => (prev === task.key ? null : task.key));
   };
 
   const getReferralLink = () => {
-    // можно использовать telegramId или username
     const code = telegramId || userFromInit?.username || '';
     return `${REF_BASE}${code}`;
   };
@@ -102,7 +101,7 @@ export default function Tasks({ telegramId, userFromInit }) {
               background: '#111',
             }}
           >
-            {/* верхняя строка: название + награда */}
+            {/* верхняя часть */}
             <div
               style={{
                 display: 'flex',
@@ -116,6 +115,8 @@ export default function Tasks({ telegramId, userFromInit }) {
                   {task.isSecret ? '⭐ ' : ''}
                   {task.title}
                 </h3>
+
+                {/* описание цели для рефералов */}
                 {task.type === 'referral' && task.targetCount && (
                   <p
                     style={{
@@ -127,7 +128,23 @@ export default function Tasks({ telegramId, userFromInit }) {
                     Цель: {task.targetCount} приглашённых
                   </p>
                 )}
-                {task.progress && task.type === 'referral' && (
+
+                {/* описание для рекламы */}
+                {task.type === 'ad' && task.targetCount && (
+                  <p
+                    style={{
+                      fontSize: 12,
+                      opacity: 0.8,
+                      margin: '4px 0 0',
+                    }}
+                  >
+                    Можно посмотреть: {task.targetCount} раз, за каждый просмотр +
+                    {task.reward} ₽
+                  </p>
+                )}
+
+                {/* универсальный прогресс, если есть */}
+                {task.progress && (
                   <p
                     style={{
                       fontSize: 12,
@@ -151,7 +168,7 @@ export default function Tasks({ telegramId, userFromInit }) {
               </span>
             </div>
 
-            {/* кнопка "Выполнить" / "Выполнено" */}
+            {/* кнопка "Выполнить"/"Выполнено" */}
             <div style={{ marginTop: 8 }}>
               {task.completed ? (
                 <button
@@ -192,7 +209,7 @@ export default function Tasks({ telegramId, userFromInit }) {
               )}
             </div>
 
-            {/* менюшка с деталями задания */}
+            {/* менюшка деталей */}
             {isOpen && !task.completed && (
               <div
                 style={{
@@ -204,11 +221,12 @@ export default function Tasks({ telegramId, userFromInit }) {
                   fontSize: 13,
                 }}
               >
+                {/* общее описание, если есть */}
                 {task.description && (
                   <p style={{ margin: '0 0 8px' }}>{task.description}</p>
                 )}
 
-                {/* подписки / репост / реклама – показываем ссылку */}
+                {/* ссылка на канал / пост */}
                 {task.link && (
                   <a
                     href={task.link}
@@ -225,11 +243,44 @@ export default function Tasks({ telegramId, userFromInit }) {
                   </a>
                 )}
 
-                {/* блок для реферальных заданий */}
+                {/* спец-инструкция для репоста в истории */}
+                {task.key === 'story_repost' && (
+                  <div
+                    style={{
+                      marginBottom: 8,
+                      padding: 8,
+                      borderRadius: 8,
+                      background: '#0b1120',
+                      fontSize: 12,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                      Как выполнить задание:
+                    </div>
+                    <ol style={{ paddingLeft: 16, margin: 0 }}>
+                      <li>Открой пост на нашем канале (кнопка выше).</li>
+                      <li>
+                        Нажми «Поделиться» → «Добавить в историю» в Telegram.
+                      </li>
+                      <li>Опубликуй историю у себя.</li>
+                      <li>
+                        После публикации вернись сюда и нажми кнопку «Выполнил».
+                      </li>
+                    </ol>
+                    <p style={{ marginTop: 6, opacity: 0.8 }}>
+                      При необходимости модерация может запросить скриншот
+                      истории.
+                    </p>
+                  </div>
+                )}
+
+                {/* блок для реферальных задач */}
                 {task.type === 'referral' && (
                   <div
                     style={{
                       marginTop: 4,
+                      marginBottom: 8,
                       padding: 8,
                       borderRadius: 8,
                       background: '#0b1120',
@@ -252,6 +303,15 @@ export default function Tasks({ telegramId, userFromInit }) {
                       выполнены, нажмите «Выполнил».
                     </div>
                   </div>
+                )}
+
+                {/* пояснение для рекламы */}
+                {task.type === 'ad' && (
+                  <p style={{ margin: '0 0 8px', fontSize: 12 }}>
+                    Нажимай «Выполнил» после каждого просмотра рекламного
+                    ролика. Максимум {task.targetCount} просмотров, по{' '}
+                    {task.reward} ₽ за каждый.
+                  </p>
                 )}
 
                 <button
