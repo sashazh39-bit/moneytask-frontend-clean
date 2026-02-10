@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { apiGet, apiPost } from '../api/client';
 
 // ссылка для рефералов
-const REF_BASE = 'https://t.me/ТВОЙ_БОТ_USERNAME?start='; // замени на username бота
+const REF_BASE = 'https://t.me/moneytaskdemo_bot?start=';
 
 // порядок отображения задач
 const ORDER = [
@@ -69,6 +69,17 @@ export default function Tasks({ telegramId, userFromInit }) {
       setBusyKey(task.key);
       const res = await apiPost(`/api/tasks/${task.key}/complete`, { telegramId });
       alert(res.message + ` Новый баланс: ${res.newBalance} ₽`);
+
+      // Оптимистично помечаем одноразовые задания выполненными:
+      // это защищает UI от случая, когда refresh списка временно не сработал.
+      if (task.type !== 'referral' && task.type !== 'ad') {
+        setTasks((prev) =>
+          prev.map((t) =>
+            t.key === task.key ? { ...t, completed: true } : t
+          )
+        );
+      }
+
       setOpenedKey(null);
       await loadTasks();
     } catch (e) {
