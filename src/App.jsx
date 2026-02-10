@@ -74,7 +74,7 @@ function App() {
   const screens = {
     home: <Home {...screenProps} />,
     tasks: <Tasks {...screenProps} />,
-    wallet: <Wallet {...screenProps} />,
+    wallet: <Wallet {...screenProps} onBack={() => setActiveTab('home')} />,
     withdrawals: <Withdrawals {...screenProps} />,
     info: <Info {...screenProps} />,
     admin: <Admin {...screenProps} />,
@@ -84,7 +84,7 @@ function App() {
     <div
       style={{
         minHeight: '100vh',
-        paddingBottom: 56,
+        paddingBottom: 72,
         background: '#000',
         color: '#fff',
         fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
