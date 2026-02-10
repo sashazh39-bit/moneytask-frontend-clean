@@ -56,6 +56,8 @@ function App() {
     if (tg) {
       tg.ready();
       tg.expand?.();
+      tg.setBackgroundColor?.('#000000');
+      tg.enableClosingConfirmation?.();
     }
   }, []);
 
