@@ -23,7 +23,6 @@ export default function Tasks({ telegramId, userFromInit }) {
 
   // для заявки на репост
   const [storyScreenshotUrl, setStoryScreenshotUrl] = useState('');
-  const [storyLink, setStoryLink] = useState('');
   const [storySending, setStorySending] = useState(false);
 
   const loadTasks = async () => {
@@ -61,7 +60,7 @@ export default function Tasks({ telegramId, userFromInit }) {
 
     // репост обрабатывается через заявку, а не прямой complete
     if (task.key === 'story_repost') {
-      alert('Для этого задания сначала отправь скриншот истории.');
+      alert('Для этого задания отправь ссылку на репост.');
       return;
     }
 
@@ -101,7 +100,7 @@ export default function Tasks({ telegramId, userFromInit }) {
 
   const submitStoryRequest = async () => {
     if (!storyScreenshotUrl.trim()) {
-      alert('Укажи ссылку на скриншот истории');
+      alert('Укажи ссылку на репост');
       return;
     }
     try {
@@ -109,11 +108,9 @@ export default function Tasks({ telegramId, userFromInit }) {
       const res = await apiPost('/api/story-repost/request', {
         telegramId,
         screenshotUrl: storyScreenshotUrl.trim(),
-        storyLink: storyLink.trim() || undefined,
       });
-      alert(res.message || 'Заявка отправлена на модерацию');
+      alert(res.message || 'Ссылка отправлена. Награда будет начислена в течение 24 часов.');
       setStoryScreenshotUrl('');
-      setStoryLink('');
       setOpenedKey(null);
     } catch (e) {
       alert('Ошибка отправки заявки: ' + e.message);
@@ -300,18 +297,17 @@ export default function Tasks({ telegramId, userFromInit }) {
                     </div>
                     <ol style={{ paddingLeft: 16, margin: 0 }}>
                       <li>Открой пост на нашем канале (кнопка выше).</li>
-                      <li>Нажми «Поделиться» → «Добавить в историю».</li>
-                      <li>Опубликуй историю у себя в Telegram.</li>
-                      <li>
-                        Сделай скриншот истории и загрузи его (Telegram‑облако,
-                        Imgur и т.п.).
-                      </li>
-                      <li>Вставь ссылку на скриншот ниже и отправь на проверку.</li>
+                      <li>Сделай репост в историю Telegram.</li>
+                      <li>Скопируй ссылку на свой репост.</li>
+                      <li>Вставь ссылку ниже и отправь.</li>
                     </ol>
+                    <p style={{ marginTop: 8, marginBottom: 0 }}>
+                      Награда будет начислена в течение 24 часов.
+                    </p>
 
                     <div style={{ marginTop: 8 }}>
                       <label style={{ fontSize: 12 }}>
-                        Ссылка на скриншот истории *
+                        Ссылка на репост *
                       </label>
                       <input
                         type="text"
@@ -319,28 +315,6 @@ export default function Tasks({ telegramId, userFromInit }) {
                         onChange={(e) =>
                           setStoryScreenshotUrl(e.target.value)
                         }
-                        placeholder="https://..."
-                        style={{
-                          width: '100%',
-                          marginTop: 4,
-                          padding: 6,
-                          borderRadius: 6,
-                          border: '1px solid #334155',
-                          background: '#020617',
-                          color: '#e5e7eb',
-                          fontSize: 12,
-                        }}
-                      />
-                    </div>
-
-                    <div style={{ marginTop: 8 }}>
-                      <label style={{ fontSize: 12 }}>
-                        Ссылка на историю / пост (необязательно)
-                      </label>
-                      <input
-                        type="text"
-                        value={storyLink}
-                        onChange={(e) => setStoryLink(e.target.value)}
                         placeholder="https://t.me/..."
                         style={{
                           width: '100%',
@@ -372,7 +346,7 @@ export default function Tasks({ telegramId, userFromInit }) {
                     >
                       {storySending
                         ? 'Отправляем...'
-                        : 'Отправить на проверку'}
+                        : 'Отправить ссылку'}
                     </button>
                   </div>
                 )}
