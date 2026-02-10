@@ -6,7 +6,6 @@ import Wallet from './pages/Wallet';
 import Withdrawals from './pages/Withdrawals';
 import Info from './pages/Info';
 import Admin from './pages/Admin';
-import Support from './pages/Support';
 import TabBar from './components/TabBar';
 import { useTelegramUser } from './hooks/useTelegramUser';
 import { apiGet, apiPost } from './api/client';
@@ -77,7 +76,6 @@ function App() {
     tasks: <Tasks {...screenProps} />,
     wallet: <Wallet {...screenProps} />,
     withdrawals: <Withdrawals {...screenProps} />,
-    support: <Support {...screenProps} />,
     info: <Info {...screenProps} />,
     admin: <Admin {...screenProps} />,
   };

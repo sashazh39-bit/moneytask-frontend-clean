@@ -3,7 +3,6 @@ const tabs = [
   { id: 'tasks', label: 'Задания', icon: '✅' },
   { id: 'wallet', label: 'Кошелёк', icon: '💰' },
   { id: 'withdrawals', label: 'Выплаты', icon: '💸' },
-  { id: 'support', label: 'Поддержка', icon: '💬' },
   { id: 'info', label: 'Инфо', icon: 'ℹ️' },
 ];
 
