@@ -2,9 +2,16 @@
 
 const API_BASE = 'https://moneytask-backend.onrender.com';
 
+function withTelegramHeader(headers = {}, telegramId) {
+  if (!telegramId) return headers;
+  return { ...headers, 'X-Telegram-Id': String(telegramId) };
+}
+
 // GET запрос
-export async function apiGet(path) {
-  const res = await fetch(API_BASE + path);
+export async function apiGet(path, options = {}) {
+  const res = await fetch(API_BASE + path, {
+    headers: withTelegramHeader({}, options.telegramId),
+  });
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: 'Unknown error' }));
@@ -15,10 +22,13 @@ export async function apiGet(path) {
 }
 
 // POST запрос
-export async function apiPost(path, body) {
+export async function apiPost(path, body, options = {}) {
   const res = await fetch(API_BASE + path, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: withTelegramHeader(
+      { 'Content-Type': 'application/json' },
+      options.telegramId
+    ),
     body: JSON.stringify(body),
   });
 
@@ -31,10 +41,13 @@ export async function apiPost(path, body) {
 }
 
 // PUT запрос (для обновлений)
-export async function apiPut(path, body) {
+export async function apiPut(path, body, options = {}) {
   const res = await fetch(API_BASE + path, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: withTelegramHeader(
+      { 'Content-Type': 'application/json' },
+      options.telegramId
+    ),
     body: JSON.stringify(body),
   });
 

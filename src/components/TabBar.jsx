@@ -6,7 +6,11 @@ const tabs = [
   { id: 'info', label: 'Инфо', icon: 'ℹ️' },
 ];
 
-export default function TabBar({ activeTab, onChange }) {
+export default function TabBar({ activeTab, onChange, isAdmin = false }) {
+  const visibleTabs = isAdmin
+    ? [...tabs, { id: 'admin', label: 'Админ', icon: '🛡️' }]
+    : tabs;
+
   return (
     <div
       style={{
@@ -19,7 +23,7 @@ export default function TabBar({ activeTab, onChange }) {
         background: '#111',
       }}
     >
-      {tabs.map((tab) => (
+      {visibleTabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onChange(tab.id)}
