@@ -30,10 +30,9 @@ const METHODS = [
   { id: 'ton', label: 'TON' },
 ];
 
-const TOP_ROW_HEIGHT = 48;
 const SHAPKA_HEIGHT = 52;
-const headerHeight = TOP_ROW_HEIGHT + SHAPKA_HEIGHT;
-const tabBarHeight = 60;
+const headerHeight = 116;
+const tabBarHeight = 74;
 
 const PAY_ICONS_ACTIVE = {
   sbp: paySbp,
@@ -88,92 +87,97 @@ export default function Wallet({ telegramId, onBack }) {
         minHeight: '100vh',
         background: '#0E101C',
         color: '#fff',
+        width: '100%',
+        overflowX: 'hidden',
         paddingBottom: tabBarHeight + 24,
       }}
     >
-      {/* Верхняя строка: кнопка назад | заголовок | меню */}
+      {/* Шапка: полоска shapka + крупные кнопки + заголовок ниже */}
       <div
         style={{
           position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
-          height: TOP_ROW_HEIGHT,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingLeft: 12,
-          paddingRight: 12,
+          height: headerHeight,
           background: '#0E101C',
           zIndex: 101,
         }}
       >
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Назад"
+        <div
           style={{
-            width: 40,
-            height: 40,
-            border: 'none',
-            background: 'transparent',
-            cursor: 'pointer',
+            height: SHAPKA_HEIGHT,
+            marginTop: 8,
+            marginLeft: 8,
+            marginRight: 8,
+            backgroundImage: `url(${shapka})`,
+            backgroundSize: '100% 100%',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            padding: 0,
+            justifyContent: 'space-between',
+            paddingLeft: 8,
+            paddingRight: 8,
           }}
         >
-          <img src={headerBackActive} alt="" width={30} height={30} style={{ display: 'block' }} />
-        </button>
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Назад"
+            style={{
+              width: 44,
+              height: 44,
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+            }}
+          >
+            <img src={headerBackActive} alt="" width={34} height={34} style={{ display: 'block' }} />
+          </button>
+          <button
+            type="button"
+            aria-label="Меню"
+            style={{
+              width: 44,
+              height: 44,
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+            }}
+          >
+            <img src={headerMenu} alt="" width={34} height={34} style={{ display: 'block' }} />
+          </button>
+        </div>
         <h1
           style={{
-            margin: 0,
+            margin: '14px 0 0 18px',
             fontSize: 20,
             fontWeight: 700,
-            position: 'absolute',
-            left: '50%',
-            transform: 'translateX(-50%)',
+            lineHeight: 1,
           }}
         >
           Кошелёк
         </h1>
-        <button
-          type="button"
-          aria-label="Меню"
-          style={{
-            width: 40,
-            height: 40,
-            border: 'none',
-            background: 'transparent',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 0,
-          }}
-        >
-          <img src={headerMenu} alt="" width={30} height={30} style={{ display: 'block' }} />
-        </button>
       </div>
 
-      {/* Полоска shapka под кнопками */}
       <div
         style={{
-          position: 'fixed',
-          top: TOP_ROW_HEIGHT,
-          left: 0,
-          right: 0,
-          height: SHAPKA_HEIGHT,
-          backgroundImage: `url(${shapka})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          zIndex: 100,
+          paddingTop: headerHeight + 16,
+          paddingLeft: 16,
+          paddingRight: 16,
+          maxWidth: '100%',
+          overflowX: 'hidden',
         }}
-      />
-
-      <div style={{ paddingTop: headerHeight + 16, paddingLeft: 16, paddingRight: 16 }}>
+      >
         {/* Блок баланса: фон из block-balance.svg + запасной цвет, чтобы блок всегда виден */}
         <div
           style={{
@@ -187,7 +191,7 @@ export default function Wallet({ telegramId, onBack }) {
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
             marginBottom: 20,
-            padding: '16px 20px',
+            padding: '14px 18px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
@@ -196,7 +200,7 @@ export default function Wallet({ telegramId, onBack }) {
           <div style={{ fontSize: 14, color: '#e5e7eb', marginBottom: 4 }}>
             Доступно для вывода
           </div>
-          <div style={{ fontSize: 32, fontWeight: 700, color: '#60a5fa' }}>
+          <div style={{ fontSize: 50, fontWeight: 700, color: '#60a5fa', lineHeight: 1 }}>
             {user ? `${user.balance} ₽` : '0 ₽'}
           </div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>
@@ -236,7 +240,7 @@ export default function Wallet({ telegramId, onBack }) {
                 cursor: 'pointer',
                 textAlign: 'left',
                 fontSize: 15,
-                minHeight: 72,
+                minHeight: 96,
                 overflow: 'hidden',
               }}
             >

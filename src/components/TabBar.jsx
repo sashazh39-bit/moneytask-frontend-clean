@@ -13,20 +13,16 @@ const tabs = [
   { id: 'info', label: 'Инфо', icon: tabInfo },
 ];
 
-const ICON_SIZE = 32;
-
-export default function TabBar({ activeTab, onChange, isAdmin = false }) {
-  const visibleTabs = isAdmin
-    ? [...tabs, { id: 'admin', label: 'Админ', icon: tabHome }]
-    : tabs;
+export default function TabBar({ activeTab, onChange }) {
+  const visibleTabs = tabs;
 
   return (
     <div
       style={{
         position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
+        bottom: 10,
+        left: 8,
+        right: 8,
         height: 60,
         display: 'flex',
         alignItems: 'center',
@@ -35,8 +31,7 @@ export default function TabBar({ activeTab, onChange, isAdmin = false }) {
         backgroundSize: '100% 100%',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+        borderRadius: 20,
         overflow: 'hidden',
         zIndex: 50,
       }}
@@ -60,8 +55,8 @@ export default function TabBar({ activeTab, onChange, isAdmin = false }) {
           <img
             src={tab.icon}
             alt=""
-            width={ICON_SIZE}
-            height={ICON_SIZE}
+            width={34}
+            height={34}
             style={{ display: 'block' }}
           />
         </button>
