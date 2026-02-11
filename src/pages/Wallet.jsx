@@ -27,7 +27,7 @@ const SHIFT_HEADER_X_PX = -6; // shapka + стрелка + бургер + заг
 const SHIFT_PAYMENTS_X_PX = -6; // edeniza + заголовок выбора + все карточки платежей
 
 // ——— 1. Высота надписи MoneyTask в шапке: меняй только это значение ———
-const MONEYTASK_LOGO_TOP_PX = 14;
+const MONEYTASK_LOGO_TOP_PX = 18;
 
 // ——— 2. Блок баланса: позиция и размер самого блока (не цифры внутри) ———
 const BALANCE_BLOCK_TOP_PX = 109; // поднять выше → уменьшить (например 95)
