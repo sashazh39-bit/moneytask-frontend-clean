@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { apiGet } from '../api/client';
 
 import shapka from '../assets/icons/shapka.svg';
+import moneyTaskLogo from '../assets/icons/MoneyTask.svg';
 import headerBackActive from '../assets/icons/header-back-active.svg';
 import headerMenu from '../assets/icons/header-menu.svg';
 import blockBalance from '../assets/icons/block-balance.svg';
@@ -147,6 +148,21 @@ export default function Wallet({ telegramId, onBack }) {
             width: px(312),
             height: px(52),
             display: 'block',
+          }}
+        />
+
+        {/* Логотип MoneyTask по центру шапки */}
+        <img
+          src={moneyTaskLogo}
+          alt="MoneyTask"
+          style={{
+            position: 'absolute',
+            top: px(16),
+            left: px(100 + SHIFT_HEADER_X_PX),
+            width: px(119),
+            height: px(30),
+            display: 'block',
+            opacity: 1,
           }}
         />
 
