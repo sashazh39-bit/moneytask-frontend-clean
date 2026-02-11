@@ -31,17 +31,17 @@ const MONEYTASK_LOGO_TOP_PX = 18;
 
 // ——— 2. Блок баланса ———
 // Только координаты блока (меняй только их, чтобы сдвинуть весь блок):
-const BALANCE_BLOCK_TOP_PX = 70;
-const BALANCE_BLOCK_LEFT_PX = 8;
+const BALANCE_BLOCK_TOP_PX = 80;
+const BALANCE_BLOCK_LEFT_PX = 12;
 // Размер блока:
 const BALANCE_BLOCK_WIDTH_PX = 290;
 const BALANCE_BLOCK_HEIGHT_PX = 70;
 // Координаты надписей и цифр внутри блока (относительно левого верхнего угла блока):
-const BALANCE_LABEL_TOP_PX = 23;
+const BALANCE_LABEL_TOP_PX = 13;
 const BALANCE_LABEL_LEFT_PX = 13;
-const BALANCE_AMOUNT_TOP_PX = 39;
+const BALANCE_AMOUNT_TOP_PX = 29;
 const BALANCE_AMOUNT_LEFT_PX = 13;
-const BALANCE_MIN_TOP_PX = 54;
+const BALANCE_MIN_TOP_PX = 44;
 const BALANCE_MIN_LEFT_PX = 13;
 
 // Высота фиксированной шапки (shapka + кнопки); контент ниже прокручивается
