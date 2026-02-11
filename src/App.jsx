@@ -56,7 +56,7 @@ function App() {
     if (tg) {
       tg.ready();
       tg.expand?.();
-      tg.setBackgroundColor?.('#000000');
+      tg.setBackgroundColor?.('#0E101C');
       tg.enableClosingConfirmation?.();
     }
   }, []);
@@ -87,7 +87,7 @@ function App() {
       style={{
         minHeight: '100vh',
         paddingBottom: 72,
-        background: '#000',
+        background: '#0E101C',
         color: '#fff',
         fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
       }}

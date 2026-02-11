@@ -1,6 +1,22 @@
 import { useEffect, useState } from 'react';
 import { apiGet, apiPost } from '../api/client';
 
+import shapka from '../assets/icons/shapka.svg';
+import headerBack from '../assets/icons/header-back.svg';
+import headerMenu from '../assets/icons/header-menu.svg';
+import paySbp from '../assets/icons/pay-sbp.svg';
+import paySbpInactive from '../assets/icons/pay-sbp-inactive.svg';
+import payCard from '../assets/icons/pay-card.svg';
+import payCardInactive from '../assets/icons/pay-card-inactive.svg';
+import payPiastrix from '../assets/icons/pay-piastrix.svg';
+import payPiastrixInactive from '../assets/icons/pay-piastrix-inactive.svg';
+import payUsdt from '../assets/icons/pay-usdt.svg';
+import payUsdtInactive from '../assets/icons/pay-usdt-inactive.svg';
+import payFkwallet from '../assets/icons/pay-fkwallet.svg';
+import payFkwalletInactive from '../assets/icons/pay-fkwallet-inactive.svg';
+import payTon from '../assets/icons/pay-ton.svg';
+import payTonInactive from '../assets/icons/pay-ton-inactive.svg';
+
 const MIN_AMOUNT = 500;
 const MIN_AMOUNT_DISPLAY = '500 ₽';
 
@@ -13,8 +29,25 @@ const METHODS = [
   { id: 'ton', label: 'TON' },
 ];
 
-const headerHeight = 56;
+const headerHeight = 52;
 const tabBarHeight = 64;
+
+const PAY_ICONS_ACTIVE = {
+  sbp: paySbp,
+  card: payCard,
+  piastrix: payPiastrix,
+  usdt_trc20: payUsdt,
+  fkwallet: payFkwallet,
+  ton: payTon,
+};
+const PAY_ICONS_INACTIVE = {
+  sbp: paySbpInactive,
+  card: payCardInactive,
+  piastrix: payPiastrixInactive,
+  usdt_trc20: payUsdtInactive,
+  fkwallet: payFkwalletInactive,
+  ton: payTonInactive,
+};
 
 export default function Wallet({ telegramId, onBack }) {
   const [user, setUser] = useState(null);
@@ -88,7 +121,7 @@ export default function Wallet({ telegramId, onBack }) {
     <div
       style={{
         minHeight: '100vh',
-        background: '#0f0f0f',
+        background: '#0E101C',
         color: '#fff',
         paddingBottom: tabBarHeight + 24,
       }}
@@ -106,7 +139,10 @@ export default function Wallet({ telegramId, onBack }) {
           justifyContent: 'space-between',
           paddingLeft: 12,
           paddingRight: 12,
-          background: '#0f0f0f',
+          backgroundImage: `url(${shapka})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
           zIndex: 100,
         }}
       >
@@ -116,19 +152,17 @@ export default function Wallet({ telegramId, onBack }) {
           aria-label="Назад"
           style={{
             width: 40,
-            height: 36,
-            borderRadius: 20,
+            height: 40,
             border: 'none',
-            background: '#2a2a2a',
-            color: '#60a5fa',
-            fontSize: 18,
+            background: 'transparent',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            padding: 0,
           }}
         >
-          ←
+          <img src={headerBack} alt="" width={30} height={30} style={{ display: 'block' }} />
         </button>
         <h1
           style={{
@@ -147,19 +181,17 @@ export default function Wallet({ telegramId, onBack }) {
           aria-label="Меню"
           style={{
             width: 40,
-            height: 36,
-            borderRadius: 20,
+            height: 40,
             border: 'none',
-            background: '#2a2a2a',
-            color: '#9ca3af',
-            fontSize: 18,
+            background: 'transparent',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            padding: 0,
           }}
         >
-          ☰
+          <img src={headerMenu} alt="" width={30} height={30} style={{ display: 'block' }} />
         </button>
       </header>
 
@@ -236,14 +268,13 @@ export default function Wallet({ telegramId, onBack }) {
               }}
             >
               <span>{m.label}</span>
-              <span style={{ width: 32, height: 32, fontSize: 20, opacity: 0.9 }}>
-                {m.id === 'sbp' && '◆'}
-                {m.id === 'card' && '✓'}
-                {m.id === 'piastrix' && '✶'}
-                {m.id === 'usdt_trc20' && '₮'}
-                {m.id === 'fkwallet' && 'FK'}
-                {m.id === 'ton' && '◢'}
-              </span>
+              <img
+                src={method === m.id ? PAY_ICONS_ACTIVE[m.id] : PAY_ICONS_INACTIVE[m.id]}
+                alt=""
+                width={32}
+                height={32}
+                style={{ flexShrink: 0 }}
+              />
             </button>
           ))}
         </div>

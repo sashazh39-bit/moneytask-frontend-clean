@@ -151,7 +151,7 @@ export default function Tasks({ telegramId, userFromInit }) {
                 border: '1px solid #333',
                 padding: 12,
                 marginBottom: 12,
-                background: '#111',
+                background: '#13162a',
               }}
             >
               <div
