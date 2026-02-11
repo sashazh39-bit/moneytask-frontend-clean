@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { apiGet } from '../api/client';
 
 import shapka from '../assets/icons/shapka.svg';
@@ -19,20 +19,17 @@ import payFkwalletInactive from '../assets/icons/pay-fkwallet-inactive.svg';
 import payTon from '../assets/icons/pay-ton.svg';
 import payTonInactive from '../assets/icons/pay-ton-inactive.svg';
 
+const BASE_WIDTH = 320;
 const MIN_AMOUNT_DISPLAY = '500 ₽';
 
 const METHODS = [
-  { id: 'sbp', label: 'СБП' },
-  { id: 'card', label: 'По номеру карты' },
-  { id: 'piastrix', label: 'Piastrix' },
-  { id: 'usdt_trc20', label: 'USDT' },
-  { id: 'fkwallet', label: 'FKwallet' },
-  { id: 'ton', label: 'TON' },
+  { id: 'sbp', label: 'СБП', x: 8, y: 222 },
+  { id: 'card', label: 'По номеру карты', x: 163, y: 222 },
+  { id: 'piastrix', label: 'Piastrix', x: 8, y: 298 },
+  { id: 'usdt_trc20', label: 'USDT', x: 163, y: 298 },
+  { id: 'fkwallet', label: 'FKwallet', x: 8, y: 374 },
+  { id: 'ton', label: 'TON', x: 163, y: 374 },
 ];
-
-const SHAPKA_HEIGHT = 52;
-const headerHeight = 116;
-const tabBarHeight = 74;
 
 const PAY_ICONS_ACTIVE = {
   sbp: paySbp,
@@ -55,6 +52,22 @@ export default function Wallet({ telegramId, onBack }) {
   const [user, setUser] = useState(null);
   const [method, setMethod] = useState('sbp');
   const [loading, setLoading] = useState(true);
+  const [viewportWidth, setViewportWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : BASE_WIDTH
+  );
+
+  useEffect(() => {
+    const onResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const scale = useMemo(() => {
+    const clamped = Math.min(viewportWidth, 430);
+    return clamped / BASE_WIDTH;
+  }, [viewportWidth]);
+
+  const px = (value) => value * scale;
 
   const load = async () => {
     try {
@@ -75,7 +88,7 @@ export default function Wallet({ telegramId, onBack }) {
 
   if (loading) {
     return (
-      <div style={{ padding: 16, paddingTop: headerHeight + 16, background: '#0E101C', color: '#fff' }}>
+      <div style={{ padding: 16, background: '#0E101C', color: '#fff' }}>
         Загрузка...
       </div>
     );
@@ -87,193 +100,219 @@ export default function Wallet({ telegramId, onBack }) {
         minHeight: '100vh',
         background: '#0E101C',
         color: '#fff',
-        width: '100%',
         overflowX: 'hidden',
-        paddingBottom: tabBarHeight + 24,
+        display: 'flex',
+        justifyContent: 'center',
+        paddingBottom: px(86),
       }}
     >
-      {/* Шапка: полоска shapka + крупные кнопки + заголовок ниже */}
       <div
         style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: headerHeight,
-          background: '#0E101C',
-          zIndex: 101,
+          position: 'relative',
+          width: px(320),
+          minHeight: px(470),
         }}
       >
+        {/* Плашка shapka */}
         <div
           style={{
-            height: SHAPKA_HEIGHT,
-            marginTop: 8,
-            marginLeft: 8,
-            marginRight: 8,
+            position: 'absolute',
+            top: px(5),
+            left: px(4),
+            width: px(312),
+            height: px(52),
             backgroundImage: `url(${shapka})`,
             backgroundSize: '100% 100%',
-            backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
+          }}
+        />
+
+        {/* Стрелка назад */}
+        <button
+          type="button"
+          onClick={onBack}
+          aria-label="Назад"
+          style={{
+            position: 'absolute',
+            top: px(16),
+            left: px(11),
+            width: px(30),
+            height: px(30),
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingLeft: 8,
-            paddingRight: 8,
+            justifyContent: 'center',
           }}
         >
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Назад"
-            style={{
-              width: 44,
-              height: 44,
-              border: 'none',
-              background: 'transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 0,
-            }}
-          >
-            <img src={headerBackActive} alt="" width={34} height={34} style={{ display: 'block' }} />
-          </button>
-          <button
-            type="button"
-            aria-label="Меню"
-            style={{
-              width: 44,
-              height: 44,
-              border: 'none',
-              background: 'transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 0,
-            }}
-          >
-            <img src={headerMenu} alt="" width={34} height={34} style={{ display: 'block' }} />
-          </button>
-        </div>
+          <img src={headerBackActive} alt="" width={px(30)} height={px(30)} />
+        </button>
+
+        {/* Бургер */}
+        <button
+          type="button"
+          aria-label="Меню"
+          style={{
+            position: 'absolute',
+            top: px(16),
+            left: px(279),
+            width: px(30),
+            height: px(30),
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <img src={headerMenu} alt="" width={px(30)} height={px(30)} />
+        </button>
+
+        {/* Заголовок */}
         <h1
           style={{
-            margin: '14px 0 0 18px',
-            fontSize: 20,
-            fontWeight: 700,
+            position: 'absolute',
+            top: px(72),
+            left: px(15),
+            margin: 0,
+            fontSize: px(19),
             lineHeight: 1,
+            fontWeight: 900,
           }}
         >
           Кошелёк
         </h1>
-      </div>
 
-      <div
-        style={{
-          paddingTop: headerHeight + 16,
-          paddingLeft: 16,
-          paddingRight: 16,
-          maxWidth: '100%',
-          overflowX: 'hidden',
-        }}
-      >
-        {/* Блок баланса: фон из block-balance.svg + запасной цвет, чтобы блок всегда виден */}
+        {/* Блок баланса */}
         <div
           style={{
-            position: 'relative',
-            width: '100%',
-            minHeight: 79,
-            borderRadius: 8,
+            position: 'absolute',
+            top: px(109),
+            left: px(8),
+            width: px(304),
+            height: px(79),
+            borderRadius: px(8),
             backgroundColor: '#121929',
             backgroundImage: `url(${blockBalance})`,
             backgroundSize: '100% 100%',
             backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            marginBottom: 20,
-            padding: '14px 18px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            paddingLeft: px(13),
+            paddingTop: px(13),
           }}
         >
-          <div style={{ fontSize: 14, color: '#e5e7eb', marginBottom: 4 }}>
+          <div
+            style={{
+              fontSize: px(12),
+              fontWeight: 600,
+              lineHeight: 1,
+              color: '#E8ECF6',
+            }}
+          >
             Доступно для вывода
           </div>
-          <div style={{ fontSize: 50, fontWeight: 700, color: '#60a5fa', lineHeight: 1 }}>
+          <div
+            style={{
+              marginTop: px(4),
+              fontSize: px(20),
+              fontWeight: 900,
+              lineHeight: 1,
+              color: '#60A5FA',
+            }}
+          >
             {user ? `${user.balance} ₽` : '0 ₽'}
           </div>
-          <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>
+          <div
+            style={{
+              marginTop: px(6),
+              fontSize: px(9),
+              fontWeight: 600,
+              lineHeight: 1,
+              color: '#9CA3AF',
+            }}
+          >
             Минимальная сумма для вывода {MIN_AMOUNT_DISPLAY}
           </div>
         </div>
 
-        {/* Иконка edeniza + "Выберите способ вывода" (один элемент, без дублирующего квадрата "1") */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-          <img src={edeniza} alt="" width={28} height={28} style={{ flexShrink: 0 }} />
-          <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>
-            Выберите способ вывода
-          </h2>
-        </div>
-
-        {/* Сетка способов вывода: иконка на весь блок, подпись сверху */}
+        {/* Иконка + текст выбора способа */}
+        <img
+          src={edeniza}
+          alt=""
+          style={{
+            position: 'absolute',
+            top: px(197),
+            left: px(8),
+            width: px(15),
+            height: px(15),
+          }}
+        />
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 10,
+            position: 'absolute',
+            top: px(197),
+            left: px(25),
+            fontSize: px(16),
+            fontWeight: 700,
+            lineHeight: 1,
           }}
         >
-          {METHODS.map((m) => (
-            <button
-              key={m.id}
-              type="button"
-              onClick={() => setMethod(m.id)}
+          Выберите способ вывода
+        </div>
+
+        {/* Карточки платежных систем */}
+        {METHODS.map((m) => (
+          <button
+            key={m.id}
+            type="button"
+            onClick={() => setMethod(m.id)}
+            style={{
+              position: 'absolute',
+              top: px(m.y),
+              left: px(m.x),
+              width: px(149),
+              height: px(67),
+              borderRadius: px(15),
+              border: method === m.id ? `${px(2)}px solid #2563eb` : `${px(1)}px solid #2A2A2A`,
+              backgroundColor: '#121929',
+              overflow: 'hidden',
+              padding: 0,
+              cursor: 'pointer',
+              textAlign: 'left',
+            }}
+          >
+            <img
+              src={method === m.id ? PAY_ICONS_ACTIVE[m.id] : PAY_ICONS_INACTIVE[m.id]}
+              alt=""
               style={{
-                position: 'relative',
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
                 display: 'block',
-                padding: 0,
-                borderRadius: 12,
-                border: method === m.id ? '2px solid #2563eb' : '1px solid #2a2a2a',
-                background: method === m.id ? '#1e3a5f' : '#121929',
-                color: '#fff',
-                cursor: 'pointer',
-                textAlign: 'left',
-                fontSize: 15,
-                minHeight: 108,
-                overflow: 'hidden',
+              }}
+            />
+            <span
+              style={{
+                position: 'absolute',
+                top: px(11),
+                left: px(14),
+                zIndex: 1,
+                width: m.id === 'card' ? px(59) : 'auto',
+                fontSize: px(10.5),
+                fontWeight: 600,
+                lineHeight: 1.2,
+                color: '#E8ECF6',
               }}
             >
-              <img
-                src={method === m.id ? PAY_ICONS_ACTIVE[m.id] : PAY_ICONS_INACTIVE[m.id]}
-                alt=""
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
-              <span
-                style={{
-                  position: 'absolute',
-                  top: 12,
-                  left: 12,
-                  zIndex: 1,
-                  display: 'block',
-                  width: '58%',
-                  fontWeight: 500,
-                  lineHeight: 1.15,
-                }}
-              >
-                {m.label}
-              </span>
-            </button>
-          ))}
-        </div>
+              {m.label}
+            </span>
+          </button>
+        ))}
       </div>
     </div>
   );
