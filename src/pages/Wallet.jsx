@@ -36,6 +36,11 @@ const BALANCE_BLOCK_LEFT_PX = 8;
 const BALANCE_BLOCK_WIDTH_PX = 290; // сделать короче → уменьшить (например 260)
 const BALANCE_BLOCK_HEIGHT_PX = 79;
 
+// Вертикальное расположение текста/цифр внутри блока баланса
+const BALANCE_PADDING_TOP_PX = 13; // отступ сверху (все строки ниже опускаются при увеличении)
+const BALANCE_MARGIN_AFTER_LABEL_PX = 4; // расстояние между «Доступно для вывода» и суммой
+const BALANCE_MARGIN_AFTER_AMOUNT_PX = 12; // расстояние между суммой и «Минимальная сумма...»
+
 // Высота фиксированной шапки (shapka + кнопки); контент ниже прокручивается
 const HEADER_HEIGHT_PX = 62;
 
@@ -270,16 +275,16 @@ export default function Wallet({ telegramId, onBack }) {
               backgroundSize: '100% 100%',
               backgroundRepeat: 'no-repeat',
               paddingLeft: px(13),
-              paddingTop: px(13),
+              paddingTop: px(BALANCE_PADDING_TOP_PX),
             }}
           >
             <div style={{ fontSize: px(12), fontWeight: 600, lineHeight: 1, color: '#E8ECF6' }}>
               Доступно для вывода
             </div>
-            <div style={{ marginTop: px(4), fontSize: px(20), fontWeight: 900, lineHeight: 1, color: '#FFFFFF' }}>
+            <div style={{ marginTop: px(BALANCE_MARGIN_AFTER_LABEL_PX), fontSize: px(20), fontWeight: 900, lineHeight: 1, color: '#FFFFFF' }}>
               {user ? `${user.balance} ₽` : '0 ₽'}
             </div>
-            <div style={{ marginTop: px(6), fontSize: px(9), fontWeight: 600, lineHeight: 1, color: '#9CA3AF' }}>
+            <div style={{ marginTop: px(BALANCE_MARGIN_AFTER_AMOUNT_PX), fontSize: px(9), fontWeight: 600, lineHeight: 1, color: '#9CA3AF' }}>
               Минимальная сумма для вывода {MIN_AMOUNT_DISPLAY}
             </div>
           </div>
