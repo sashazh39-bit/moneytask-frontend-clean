@@ -16,7 +16,7 @@ const tabs = [
 
 const BASE_WIDTH = 320;
 // Горизонтальный сдвиг всей группы таб-бара (в px для макета 320x568)
-const SHIFT_TABBAR_X_PX = 0;
+const SHIFT_TABBAR_X_PX = -1;
 
 export default function TabBar({ activeTab, onChange }) {
   const [viewportWidth, setViewportWidth] = useState(() =>
