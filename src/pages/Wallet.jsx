@@ -221,7 +221,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
-            gap: 12,
+            gap: 10,
           }}
         >
           {METHODS.map((m) => (
@@ -240,7 +240,7 @@ export default function Wallet({ telegramId, onBack }) {
                 cursor: 'pointer',
                 textAlign: 'left',
                 fontSize: 15,
-                minHeight: 96,
+                minHeight: 108,
                 overflow: 'hidden',
               }}
             >
@@ -259,11 +259,14 @@ export default function Wallet({ telegramId, onBack }) {
               />
               <span
                 style={{
-                  position: 'relative',
+                  position: 'absolute',
+                  top: 12,
+                  left: 12,
                   zIndex: 1,
                   display: 'block',
-                  padding: '10px 12px',
+                  width: '58%',
                   fontWeight: 500,
+                  lineHeight: 1.15,
                 }}
               >
                 {m.label}
