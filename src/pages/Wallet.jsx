@@ -31,7 +31,7 @@ const MONEYTASK_LOGO_TOP_PX = 18;
 
 // ——— 2. Блок баланса: позиция и размер самого блока (не цифры внутри) ———
 const BALANCE_BLOCK_TOP_PX = 109; // базовая вертикальная позиция (не меняет размеры)
-const BALANCE_BLOCK_TOP_OFFSET_PX = 3; // сдвиг вниз в пикселях (только опустить — меняй только это)
+const BALANCE_BLOCK_TOP_OFFSET_PX = 0; // сдвиг вниз в пикселях (только опустить — меняй только это)
 const BALANCE_BLOCK_LEFT_PX = 8;
 const BALANCE_BLOCK_WIDTH_PX = 304; // сделать короче → уменьшить (например 260)
 const BALANCE_BLOCK_HEIGHT_PX = 79;
