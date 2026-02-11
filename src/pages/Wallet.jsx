@@ -20,6 +20,7 @@ import payTon from '../assets/icons/pay-ton.svg';
 import payTonInactive from '../assets/icons/pay-ton-inactive.svg';
 
 const BASE_WIDTH = 320;
+const NUDGE_LEFT_PX = 2;
 const MIN_AMOUNT_DISPLAY = '500 ₽';
 
 const METHODS = [
@@ -112,6 +113,7 @@ export default function Wallet({ telegramId, onBack }) {
           position: 'relative',
           width: px(320),
           height: '100%',
+          transform: `translateX(-${px(NUDGE_LEFT_PX)}px)`,
         }}
       >
         {/* Плашка shapka */}
@@ -222,6 +224,8 @@ export default function Wallet({ telegramId, onBack }) {
               fontWeight: 900,
               lineHeight: 1,
               color: '#60A5FA',
+              textShadow:
+                '0 0 1px rgba(255,255,255,0.95), 0 0 8px rgba(255,255,255,0.42)',
             }}
           >
             {user ? `${user.balance} ₽` : '0 ₽'}

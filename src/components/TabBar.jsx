@@ -15,6 +15,7 @@ const tabs = [
 ];
 
 const BASE_WIDTH = 320;
+const NUDGE_LEFT_PX = 2;
 
 export default function TabBar({ activeTab, onChange }) {
   const [viewportWidth, setViewportWidth] = useState(() =>
@@ -39,7 +40,7 @@ export default function TabBar({ activeTab, onChange }) {
         position: 'fixed',
         bottom: px(5),
         left: '50%',
-        transform: 'translateX(-50%)',
+        transform: `translateX(calc(-50% - ${px(NUDGE_LEFT_PX)}px))`,
         width: px(320),
         height: px(70),
         zIndex: 120,
