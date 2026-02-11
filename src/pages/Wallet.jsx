@@ -33,7 +33,7 @@ const MONEYTASK_LOGO_TOP_PX = 18;
 const BALANCE_BLOCK_TOP_PX = 80; // поднять выше → уменьшить (например 95)
 const BALANCE_BLOCK_LEFT_PX = 8;
 const BALANCE_BLOCK_WIDTH_PX = 290; // сделать короче → уменьшить (например 260)
-const BALANCE_BLOCK_HEIGHT_PX = 79;
+const BALANCE_BLOCK_HEIGHT_PX = 70;
 
 // Высота фиксированной шапки (shapka + кнопки); контент ниже прокручивается
 const HEADER_HEIGHT_PX = 62;
