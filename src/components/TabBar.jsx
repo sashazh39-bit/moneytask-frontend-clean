@@ -13,8 +13,7 @@ const tabs = [
   { id: 'info', label: 'Инфо', icon: tabInfo },
 ];
 
-const ICON_SIZE = 28;
-const ACTIVE_ICON_SIZE = 32;
+const ICON_SIZE = 32;
 
 export default function TabBar({ activeTab, onChange, isAdmin = false }) {
   const visibleTabs = isAdmin
@@ -42,47 +41,31 @@ export default function TabBar({ activeTab, onChange, isAdmin = false }) {
         zIndex: 50,
       }}
     >
-      {visibleTabs.map((tab) => {
-        const isActive = activeTab === tab.id;
-        const size = isActive ? ACTIVE_ICON_SIZE : ICON_SIZE;
-        return (
-          <button
-            key={tab.id}
-            onClick={() => onChange(tab.id)}
-            aria-label={tab.label}
-            style={{
-              flex: 1,
-              padding: 8,
-              border: 'none',
-              background: 'transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <span
-              style={{
-                width: isActive ? 44 : 40,
-                height: isActive ? 44 : 40,
-                borderRadius: 12,
-                background: isActive ? '#2563eb' : 'transparent',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <img
-                src={tab.icon}
-                alt=""
-                width={size}
-                height={size}
-                style={{ display: 'block' }}
-              />
-            </span>
-          </button>
-        );
-      })}
+      {visibleTabs.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => onChange(tab.id)}
+          aria-label={tab.label}
+          style={{
+            flex: 1,
+            padding: 8,
+            border: 'none',
+            background: 'transparent',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <img
+            src={tab.icon}
+            alt=""
+            width={ICON_SIZE}
+            height={ICON_SIZE}
+            style={{ display: 'block' }}
+          />
+        </button>
+      ))}
     </div>
   );
 }

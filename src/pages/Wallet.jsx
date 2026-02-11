@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { apiGet } from '../api/client';
 
 import shapka from '../assets/icons/shapka.svg';
-import headerBack from '../assets/icons/header-back.svg';
+import headerBackActive from '../assets/icons/header-back-active.svg';
 import headerMenu from '../assets/icons/header-menu.svg';
 import blockBalance from '../assets/icons/block-balance.svg';
 import edeniza from '../assets/icons/edeniza.svg';
@@ -124,7 +124,7 @@ export default function Wallet({ telegramId, onBack }) {
             padding: 0,
           }}
         >
-          <img src={headerBack} alt="" width={30} height={30} style={{ display: 'block' }} />
+          <img src={headerBackActive} alt="" width={30} height={30} style={{ display: 'block' }} />
         </button>
         <h1
           style={{
@@ -174,13 +174,14 @@ export default function Wallet({ telegramId, onBack }) {
       />
 
       <div style={{ paddingTop: headerHeight + 16, paddingLeft: 16, paddingRight: 16 }}>
-        {/* Блок баланса на основе block-balance.svg */}
+        {/* Блок баланса: фон из block-balance.svg + запасной цвет, чтобы блок всегда виден */}
         <div
           style={{
             position: 'relative',
             width: '100%',
             minHeight: 79,
             borderRadius: 8,
+            backgroundColor: '#121929',
             backgroundImage: `url(${blockBalance})`,
             backgroundSize: '100% 100%',
             backgroundRepeat: 'no-repeat',
@@ -203,32 +204,15 @@ export default function Wallet({ telegramId, onBack }) {
           </div>
         </div>
 
-        {/* Шаг 1 + иконка edeniza + "Выберите способ вывода" */}
+        {/* Иконка edeniza + "Выберите способ вывода" (один элемент, без дублирующего квадрата "1") */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: 8,
-              background: '#2563eb',
-              color: '#fff',
-              fontSize: 14,
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            1
-          </div>
-          <img src={edeniza} alt="" width={24} height={24} style={{ flexShrink: 0 }} />
+          <img src={edeniza} alt="" width={28} height={28} style={{ flexShrink: 0 }} />
           <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>
             Выберите способ вывода
           </h2>
         </div>
 
-        {/* Сетка способов вывода — полноценные блоки, крупные иконки */}
+        {/* Сетка способов вывода: иконка на весь блок, подпись сверху */}
         <div
           style={{
             display: 'grid',
@@ -242,10 +226,9 @@ export default function Wallet({ telegramId, onBack }) {
               type="button"
               onClick={() => setMethod(m.id)}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '18px 16px',
+                position: 'relative',
+                display: 'block',
+                padding: 0,
                 borderRadius: 12,
                 border: method === m.id ? '2px solid #2563eb' : '1px solid #2a2a2a',
                 background: method === m.id ? '#1e3a5f' : '#121929',
@@ -254,16 +237,33 @@ export default function Wallet({ telegramId, onBack }) {
                 textAlign: 'left',
                 fontSize: 15,
                 minHeight: 72,
+                overflow: 'hidden',
               }}
             >
-              <span style={{ fontWeight: 500 }}>{m.label}</span>
               <img
                 src={method === m.id ? PAY_ICONS_ACTIVE[m.id] : PAY_ICONS_INACTIVE[m.id]}
                 alt=""
-                width={48}
-                height={48}
-                style={{ flexShrink: 0 }}
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
               />
+              <span
+                style={{
+                  position: 'relative',
+                  zIndex: 1,
+                  display: 'block',
+                  padding: '10px 12px',
+                  fontWeight: 500,
+                }}
+              >
+                {m.label}
+              </span>
             </button>
           ))}
         </div>
