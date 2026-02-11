@@ -22,7 +22,7 @@ import payTonInactive from '../assets/icons/pay-ton-inactive.svg';
 const BASE_WIDTH = 320;
 const MIN_AMOUNT_DISPLAY = '500 ₽';
 // Настройка горизонтального смещения групп (в px для макета 320x568)
-const SHIFT_HEADER_X_PX = -5; // shapka + стрелка + бургер + заголовок + блок баланса
+const SHIFT_HEADER_X_PX = -6; // shapka + стрелка + бургер + заголовок + блок баланса
 const SHIFT_PAYMENTS_X_PX = -5; // edeniza + заголовок выбора + все карточки платежей
 
 const METHODS = [
