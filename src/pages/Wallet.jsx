@@ -29,20 +29,11 @@ const SHIFT_PAYMENTS_X_PX = -6; // edeniza + заголовок выбора + �
 // ——— 1. Высота надписи MoneyTask в шапке: меняй только это значение ———
 const MONEYTASK_LOGO_TOP_PX = 18;
 
-// ——— 2. Блок баланса ———
-// Только координаты блока (меняй только их, чтобы сдвинуть весь блок):
-const BALANCE_BLOCK_TOP_PX = 90;
+// ——— 2. Блок баланса: позиция и размер самого блока (не цифры внутри) ———
+const BALANCE_BLOCK_TOP_PX = 80; // поднять выше → уменьшить (например 95)
 const BALANCE_BLOCK_LEFT_PX = 8;
-// Размер блока:
-const BALANCE_BLOCK_WIDTH_PX = 290;
+const BALANCE_BLOCK_WIDTH_PX = 290; // сделать короче → уменьшить (например 260)
 const BALANCE_BLOCK_HEIGHT_PX = 70;
-// Координаты надписей и цифр внутри блока (относительно левого верхнего угла блока):
-const BALANCE_LABEL_TOP_PX = 13;
-const BALANCE_LABEL_LEFT_PX = 13;
-const BALANCE_AMOUNT_TOP_PX = 29;
-const BALANCE_AMOUNT_LEFT_PX = 13;
-const BALANCE_MIN_TOP_PX = 44;
-const BALANCE_MIN_LEFT_PX = 13;
 
 // Высота фиксированной шапки (shapka + кнопки); контент ниже прокручивается
 const HEADER_HEIGHT_PX = 62;
@@ -277,45 +268,17 @@ export default function Wallet({ telegramId, onBack }) {
               backgroundImage: `url(${blockBalance})`,
               backgroundSize: '100% 100%',
               backgroundRepeat: 'no-repeat',
+              paddingLeft: px(13),
+              paddingTop: px(13),
             }}
           >
-            <div
-              style={{
-                position: 'absolute',
-                top: px(BALANCE_LABEL_TOP_PX),
-                left: px(BALANCE_LABEL_LEFT_PX),
-                fontSize: px(12),
-                fontWeight: 600,
-                lineHeight: 1,
-                color: '#E8ECF6',
-              }}
-            >
+            <div style={{ fontSize: px(12), fontWeight: 600, lineHeight: 1, color: '#E8ECF6' }}>
               Доступно для вывода
             </div>
-            <div
-              style={{
-                position: 'absolute',
-                top: px(BALANCE_AMOUNT_TOP_PX),
-                left: px(BALANCE_AMOUNT_LEFT_PX),
-                fontSize: px(20),
-                fontWeight: 900,
-                lineHeight: 1,
-                color: '#FFFFFF',
-              }}
-            >
+            <div style={{ marginTop: px(4), fontSize: px(20), fontWeight: 900, lineHeight: 1, color: '#FFFFFF' }}>
               {user ? `${user.balance} ₽` : '0 ₽'}
             </div>
-            <div
-              style={{
-                position: 'absolute',
-                top: px(BALANCE_MIN_TOP_PX),
-                left: px(BALANCE_MIN_LEFT_PX),
-                fontSize: px(9),
-                fontWeight: 600,
-                lineHeight: 1,
-                color: '#9CA3AF',
-              }}
-            >
+            <div style={{ marginTop: px(6), fontSize: px(9), fontWeight: 600, lineHeight: 1, color: '#9CA3AF' }}>
               Минимальная сумма для вывода {MIN_AMOUNT_DISPLAY}
             </div>
           </div>
