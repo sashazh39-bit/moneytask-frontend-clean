@@ -22,8 +22,8 @@ import payTonInactive from '../assets/icons/pay-ton-inactive.svg';
 const BASE_WIDTH = 320;
 const MIN_AMOUNT_DISPLAY = '500 ₽';
 // Настройка горизонтального смещения групп (в px для макета 320x568)
-const SHIFT_HEADER_X_PX = -6; // shapka + стрелка + бургер + заголовок + блок баланса
-const SHIFT_PAYMENTS_X_PX = -6; // edeniza + заголовок выбора + все карточки платежей
+const SHIFT_HEADER_X_PX = 0; // shapka + стрелка + бургер + заголовок + блок баланса
+const SHIFT_PAYMENTS_X_PX = 0; // edeniza + заголовок выбора + все карточки платежей
 
 const METHODS = [
   { id: 'sbp', label: 'СБП', x: 8, y: 222 },
@@ -88,6 +88,25 @@ export default function Wallet({ telegramId, onBack }) {
     if (!telegramId) return;
     load();
   }, [telegramId]);
+
+  useEffect(() => {
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevBodyOverscroll = document.body.style.overscrollBehavior;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevHtmlOverscroll = document.documentElement.style.overscrollBehavior;
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.overscrollBehavior = 'none';
+
+    return () => {
+      document.body.style.overflow = prevBodyOverflow;
+      document.body.style.overscrollBehavior = prevBodyOverscroll;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.documentElement.style.overscrollBehavior = prevHtmlOverscroll;
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -195,7 +214,7 @@ export default function Wallet({ telegramId, onBack }) {
         <div
           style={{
             position: 'absolute',
-            top: px(101),
+            top: px(109),
             left: px(8 + SHIFT_HEADER_X_PX),
             width: px(304),
             height: px(79),
