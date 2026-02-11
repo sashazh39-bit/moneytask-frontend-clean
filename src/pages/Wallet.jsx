@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { apiGet, apiPost } from '../api/client';
+import { apiGet } from '../api/client';
 
 import shapka from '../assets/icons/shapka.svg';
 import headerBack from '../assets/icons/header-back.svg';
 import headerMenu from '../assets/icons/header-menu.svg';
+import blockBalance from '../assets/icons/block-balance.svg';
+import edeniza from '../assets/icons/edeniza.svg';
 import paySbp from '../assets/icons/pay-sbp.svg';
 import paySbpInactive from '../assets/icons/pay-sbp-inactive.svg';
 import payCard from '../assets/icons/pay-card.svg';
@@ -17,7 +19,6 @@ import payFkwalletInactive from '../assets/icons/pay-fkwallet-inactive.svg';
 import payTon from '../assets/icons/pay-ton.svg';
 import payTonInactive from '../assets/icons/pay-ton-inactive.svg';
 
-const MIN_AMOUNT = 500;
 const MIN_AMOUNT_DISPLAY = '500 ₽';
 
 const METHODS = [
@@ -29,8 +30,10 @@ const METHODS = [
   { id: 'ton', label: 'TON' },
 ];
 
-const headerHeight = 52;
-const tabBarHeight = 64;
+const TOP_ROW_HEIGHT = 48;
+const SHAPKA_HEIGHT = 52;
+const headerHeight = TOP_ROW_HEIGHT + SHAPKA_HEIGHT;
+const tabBarHeight = 60;
 
 const PAY_ICONS_ACTIVE = {
   sbp: paySbp,
@@ -51,22 +54,14 @@ const PAY_ICONS_INACTIVE = {
 
 export default function Wallet({ telegramId, onBack }) {
   const [user, setUser] = useState(null);
-  const [amount, setAmount] = useState('');
   const [method, setMethod] = useState('sbp');
-  const [details, setDetails] = useState('');
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [history, setHistory] = useState([]);
 
   const load = async () => {
     try {
       setLoading(true);
-      const [u, h] = await Promise.all([
-        apiGet(`/api/users/${telegramId}`),
-        apiGet(`/api/withdrawals/user/${telegramId}`),
-      ]);
+      const u = await apiGet(`/api/users/${telegramId}`);
       setUser(u);
-      setHistory(h);
     } catch (e) {
       alert('Ошибка загрузки кошелька: ' + e.message);
     } finally {
@@ -79,39 +74,9 @@ export default function Wallet({ telegramId, onBack }) {
     load();
   }, [telegramId]);
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    const numericAmount = Number(amount);
-    if (!numericAmount || numericAmount < MIN_AMOUNT) {
-      alert(`Минимальная сумма вывода: ${MIN_AMOUNT}₽`);
-      return;
-    }
-    if (!details.trim()) {
-      alert('Заполни реквизиты для вывода');
-      return;
-    }
-    try {
-      setSubmitting(true);
-      const res = await apiPost('/api/withdrawals/request', {
-        telegramId,
-        amount: numericAmount,
-        method,
-        details: { value: details },
-      });
-      alert(res.message);
-      setAmount('');
-      setDetails('');
-      await load();
-    } catch (e) {
-      alert('Ошибка создания заявки: ' + e.message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   if (loading) {
     return (
-      <div style={{ padding: 16, paddingTop: headerHeight + 16 }}>
+      <div style={{ padding: 16, paddingTop: headerHeight + 16, background: '#0E101C', color: '#fff' }}>
         Загрузка...
       </div>
     );
@@ -126,24 +91,21 @@ export default function Wallet({ telegramId, onBack }) {
         paddingBottom: tabBarHeight + 24,
       }}
     >
-      {/* Шапка: кнопка назад | заголовок | меню */}
-      <header
+      {/* Верхняя строка: кнопка назад | заголовок | меню */}
+      <div
         style={{
           position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
-          height: headerHeight,
+          height: TOP_ROW_HEIGHT,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           paddingLeft: 12,
           paddingRight: 12,
-          backgroundImage: `url(${shapka})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          zIndex: 100,
+          background: '#0E101C',
+          zIndex: 101,
         }}
       >
         <button
@@ -193,16 +155,41 @@ export default function Wallet({ telegramId, onBack }) {
         >
           <img src={headerMenu} alt="" width={30} height={30} style={{ display: 'block' }} />
         </button>
-      </header>
+      </div>
+
+      {/* Полоска shapka под кнопками */}
+      <div
+        style={{
+          position: 'fixed',
+          top: TOP_ROW_HEIGHT,
+          left: 0,
+          right: 0,
+          height: SHAPKA_HEIGHT,
+          backgroundImage: `url(${shapka})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          zIndex: 100,
+        }}
+      />
 
       <div style={{ paddingTop: headerHeight + 16, paddingLeft: 16, paddingRight: 16 }}>
-        {/* Карточка баланса */}
+        {/* Блок баланса на основе block-balance.svg */}
         <div
           style={{
-            borderRadius: 16,
-            padding: '16px 20px',
-            background: '#1a1a1a',
+            position: 'relative',
+            width: '100%',
+            minHeight: 79,
+            borderRadius: 8,
+            backgroundImage: `url(${blockBalance})`,
+            backgroundSize: '100% 100%',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
             marginBottom: 20,
+            padding: '16px 20px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
           }}
         >
           <div style={{ fontSize: 14, color: '#e5e7eb', marginBottom: 4 }}>
@@ -216,7 +203,7 @@ export default function Wallet({ telegramId, onBack }) {
           </div>
         </div>
 
-        {/* Шаг 1: Выберите способ вывода */}
+        {/* Шаг 1 + иконка edeniza + "Выберите способ вывода" */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
           <div
             style={{
@@ -230,22 +217,23 @@ export default function Wallet({ telegramId, onBack }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              flexShrink: 0,
             }}
           >
             1
           </div>
+          <img src={edeniza} alt="" width={24} height={24} style={{ flexShrink: 0 }} />
           <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>
             Выберите способ вывода
           </h2>
         </div>
 
-        {/* Сетка 2x3 способов вывода */}
+        {/* Сетка способов вывода — полноценные блоки, крупные иконки */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
-            gap: 10,
-            marginBottom: 24,
+            gap: 12,
           }}
         >
           {METHODS.map((m) => (
@@ -257,122 +245,28 @@ export default function Wallet({ telegramId, onBack }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '14px 12px',
+                padding: '18px 16px',
                 borderRadius: 12,
                 border: method === m.id ? '2px solid #2563eb' : '1px solid #2a2a2a',
-                background: method === m.id ? '#1e3a5f' : '#1a1a1a',
+                background: method === m.id ? '#1e3a5f' : '#121929',
                 color: '#fff',
                 cursor: 'pointer',
                 textAlign: 'left',
-                fontSize: 14,
+                fontSize: 15,
+                minHeight: 72,
               }}
             >
-              <span>{m.label}</span>
+              <span style={{ fontWeight: 500 }}>{m.label}</span>
               <img
                 src={method === m.id ? PAY_ICONS_ACTIVE[m.id] : PAY_ICONS_INACTIVE[m.id]}
                 alt=""
-                width={32}
-                height={32}
+                width={48}
+                height={48}
                 style={{ flexShrink: 0 }}
               />
             </button>
           ))}
         </div>
-
-        {/* Форма: сумма и реквизиты */}
-        <div
-          style={{
-            borderRadius: 16,
-            padding: 16,
-            background: '#1a1a1a',
-            marginBottom: 20,
-          }}
-        >
-          <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>Сумма и реквизиты</h3>
-          <form onSubmit={onSubmit}>
-            <label style={{ display: 'block', fontSize: 13, marginBottom: 4 }}>
-              Сумма (₽)
-            </label>
-            <input
-              type="number"
-              min={MIN_AMOUNT}
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder={MIN_AMOUNT_DISPLAY}
-              style={{
-                width: '100%',
-                boxSizing: 'border-box',
-                padding: 10,
-                borderRadius: 10,
-                border: '1px solid #334155',
-                marginBottom: 12,
-                background: '#0f0f0f',
-                color: '#fff',
-                fontSize: 15,
-              }}
-            />
-            <label style={{ display: 'block', fontSize: 13, marginBottom: 4 }}>
-              Реквизиты (номер карты / СБП / кошелёк)
-            </label>
-            <textarea
-              rows={2}
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              placeholder="Введите реквизиты"
-              style={{
-                width: '100%',
-                boxSizing: 'border-box',
-                padding: 10,
-                borderRadius: 10,
-                border: '1px solid #334155',
-                marginBottom: 12,
-                background: '#0f0f0f',
-                color: '#fff',
-                fontSize: 15,
-                resize: 'none',
-              }}
-            />
-            <button
-              type="submit"
-              disabled={submitting}
-              style={{
-                width: '100%',
-                padding: 12,
-                borderRadius: 10,
-                border: 'none',
-                background: '#2563eb',
-                color: '#fff',
-                fontWeight: 600,
-                fontSize: 15,
-                cursor: 'pointer',
-              }}
-            >
-              {submitting ? 'Отправка...' : 'Отправить заявку'}
-            </button>
-          </form>
-        </div>
-
-        {/* История выводов */}
-        <h3 style={{ margin: '0 0 8px', fontSize: 15 }}>История выводов</h3>
-        {history.length === 0 && (
-          <p style={{ fontSize: 14, color: '#9ca3af' }}>Пока нет заявок.</p>
-        )}
-        {history.map((w) => (
-          <div
-            key={w._id}
-            style={{
-              padding: 12,
-              borderRadius: 12,
-              border: '1px solid #2a2a2a',
-              marginBottom: 8,
-              fontSize: 13,
-              background: '#1a1a1a',
-            }}
-          >
-            <div>{w.amount} ₽ • {w.method}</div>
-            <div style={{ color: '#9ca3af', marginTop: 4 }}>Статус: {w.status}</div>
-          </div>
-        ))}
       </div>
     </div>
   );

@@ -4,15 +4,17 @@ import tabTasks from '../assets/icons/tab-tasks.svg';
 import tabWallet from '../assets/icons/tab-wallet.svg';
 import tabWithdrawals from '../assets/icons/tab-withdrawals.svg';
 import tabInfo from '../assets/icons/tab-info.svg';
-import edeniza from '../assets/icons/edeniza.svg';
 
 const tabs = [
   { id: 'home', label: 'Главная', icon: tabHome },
   { id: 'tasks', label: 'Задания', icon: tabTasks },
-  { id: 'wallet', label: 'Кошелёк', icon: tabWallet, activeIcon: edeniza },
+  { id: 'wallet', label: 'Кошелёк', icon: tabWallet },
   { id: 'withdrawals', label: 'Выплаты', icon: tabWithdrawals },
   { id: 'info', label: 'Инфо', icon: tabInfo },
 ];
+
+const ICON_SIZE = 28;
+const ACTIVE_ICON_SIZE = 32;
 
 export default function TabBar({ activeTab, onChange, isAdmin = false }) {
   const visibleTabs = isAdmin
@@ -34,7 +36,6 @@ export default function TabBar({ activeTab, onChange, isAdmin = false }) {
         backgroundSize: '100% 100%',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        paddingBottom: 8,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         overflow: 'hidden',
@@ -43,44 +44,42 @@ export default function TabBar({ activeTab, onChange, isAdmin = false }) {
     >
       {visibleTabs.map((tab) => {
         const isActive = activeTab === tab.id;
-        const iconSrc = isActive && tab.activeIcon ? tab.activeIcon : tab.icon;
+        const size = isActive ? ACTIVE_ICON_SIZE : ICON_SIZE;
         return (
           <button
             key={tab.id}
             onClick={() => onChange(tab.id)}
+            aria-label={tab.label}
             style={{
               flex: 1,
-              padding: '6px 4px',
+              padding: 8,
               border: 'none',
               background: 'transparent',
-              color: isActive ? '#fff' : '#9ca3af',
-              fontSize: 11,
+              cursor: 'pointer',
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 2,
-              cursor: 'pointer',
             }}
           >
             <span
               style={{
-                width: 44,
-                height: 32,
+                width: isActive ? 44 : 40,
+                height: isActive ? 44 : 40,
+                borderRadius: 12,
+                background: isActive ? '#2563eb' : 'transparent',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
               <img
-                src={iconSrc}
+                src={tab.icon}
                 alt=""
-                width={tab.activeIcon && isActive ? 24 : 22}
-                height={tab.activeIcon && isActive ? 24 : 22}
+                width={size}
+                height={size}
                 style={{ display: 'block' }}
               />
             </span>
-            <span>{tab.label}</span>
           </button>
         );
       })}
