@@ -41,17 +41,20 @@ export default function TabBar({ activeTab, onChange }) {
         left: '50%',
         transform: 'translateX(-50%)',
         width: px(320),
-        height: px(60),
-        zIndex: 50,
+        height: px(70),
+        zIndex: 120,
       }}
     >
-      <div
+      <img
+        src={tabFont}
+        alt=""
         style={{
           position: 'absolute',
-          inset: 0,
-          backgroundImage: `url(${tabFont})`,
-          backgroundSize: '100% 100%',
-          backgroundRepeat: 'no-repeat',
+          top: px(0),
+          left: px(4),
+          width: px(312),
+          height: px(60),
+          display: 'block',
           pointerEvents: 'none',
         }}
       />

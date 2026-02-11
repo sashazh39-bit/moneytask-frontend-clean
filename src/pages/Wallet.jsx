@@ -97,33 +97,34 @@ export default function Wallet({ telegramId, onBack }) {
   return (
     <div
       style={{
-        minHeight: '100vh',
+        height: '100dvh',
         background: '#0E101C',
         color: '#fff',
         overflowX: 'hidden',
+        overflowY: 'hidden',
         display: 'flex',
         justifyContent: 'center',
-        paddingBottom: px(86),
+        paddingBottom: 0,
       }}
     >
       <div
         style={{
           position: 'relative',
           width: px(320),
-          minHeight: px(470),
+          height: '100%',
         }}
       >
         {/* Плашка shapka */}
-        <div
+        <img
+          src={shapka}
+          alt=""
           style={{
             position: 'absolute',
             top: px(5),
             left: px(4),
             width: px(312),
             height: px(52),
-            backgroundImage: `url(${shapka})`,
-            backgroundSize: '100% 100%',
-            backgroundRepeat: 'no-repeat',
+            display: 'block',
           }}
         />
 
@@ -176,7 +177,7 @@ export default function Wallet({ telegramId, onBack }) {
         <h1
           style={{
             position: 'absolute',
-            top: px(72),
+            top: px(64),
             left: px(15),
             margin: 0,
             fontSize: px(19),
@@ -191,7 +192,7 @@ export default function Wallet({ telegramId, onBack }) {
         <div
           style={{
             position: 'absolute',
-            top: px(109),
+            top: px(101),
             left: px(8),
             width: px(304),
             height: px(79),
@@ -244,7 +245,7 @@ export default function Wallet({ telegramId, onBack }) {
           alt=""
           style={{
             position: 'absolute',
-            top: px(197),
+            top: px(189),
             left: px(8),
             width: px(15),
             height: px(15),
@@ -253,7 +254,7 @@ export default function Wallet({ telegramId, onBack }) {
         <div
           style={{
             position: 'absolute',
-            top: px(197),
+            top: px(189),
             left: px(25),
             fontSize: px(16),
             fontWeight: 700,
@@ -271,7 +272,7 @@ export default function Wallet({ telegramId, onBack }) {
             onClick={() => setMethod(m.id)}
             style={{
               position: 'absolute',
-              top: px(m.y),
+              top: px(m.y - 8),
               left: px(m.x),
               width: px(149),
               height: px(67),
