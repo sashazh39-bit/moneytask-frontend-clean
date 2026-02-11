@@ -39,7 +39,7 @@ const BALANCE_BLOCK_HEIGHT_PX = 79;
 // Вертикальное расположение текста/цифр внутри блока баланса
 const BALANCE_PADDING_TOP_PX = 13; // отступ сверху (все строки ниже опускаются при увеличении)
 const BALANCE_MARGIN_AFTER_LABEL_PX = 4; // расстояние между «Доступно для вывода» и суммой
-const BALANCE_MARGIN_AFTER_AMOUNT_PX = 12; // расстояние между суммой и «Минимальная сумма...»
+const BALANCE_MARGIN_AFTER_AMOUNT_PX = 18; // расстояние между суммой и «Минимальная сумма...»
 
 // Высота фиксированной шапки (shapka + кнопки); контент ниже прокручивается
 const HEADER_HEIGHT_PX = 62;
