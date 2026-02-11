@@ -20,8 +20,10 @@ import payTon from '../assets/icons/pay-ton.svg';
 import payTonInactive from '../assets/icons/pay-ton-inactive.svg';
 
 const BASE_WIDTH = 320;
-const NUDGE_LEFT_PX = 2;
 const MIN_AMOUNT_DISPLAY = '500 ₽';
+// Настройка горизонтального смещения групп (в px для макета 320x568)
+const SHIFT_HEADER_X_PX = 0; // shapka + стрелка + бургер + заголовок + блок баланса
+const SHIFT_PAYMENTS_X_PX = 0; // edeniza + заголовок выбора + все карточки платежей
 
 const METHODS = [
   { id: 'sbp', label: 'СБП', x: 8, y: 222 },
@@ -113,7 +115,6 @@ export default function Wallet({ telegramId, onBack }) {
           position: 'relative',
           width: px(320),
           height: '100%',
-          transform: `translateX(-${px(NUDGE_LEFT_PX)}px)`,
         }}
       >
         {/* Плашка shapka */}
@@ -123,7 +124,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             position: 'absolute',
             top: px(5),
-            left: px(4),
+            left: px(4 + SHIFT_HEADER_X_PX),
             width: px(312),
             height: px(52),
             display: 'block',
@@ -138,7 +139,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             position: 'absolute',
             top: px(16),
-            left: px(11),
+            left: px(11 + SHIFT_HEADER_X_PX),
             width: px(30),
             height: px(30),
             border: 'none',
@@ -160,7 +161,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             position: 'absolute',
             top: px(16),
-            left: px(279),
+            left: px(279 + SHIFT_HEADER_X_PX),
             width: px(30),
             height: px(30),
             border: 'none',
@@ -180,7 +181,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             position: 'absolute',
             top: px(64),
-            left: px(15),
+            left: px(15 + SHIFT_HEADER_X_PX),
             margin: 0,
             fontSize: px(19),
             lineHeight: 1,
@@ -195,7 +196,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             position: 'absolute',
             top: px(101),
-            left: px(8),
+            left: px(8 + SHIFT_HEADER_X_PX),
             width: px(304),
             height: px(79),
             borderRadius: px(8),
@@ -223,9 +224,7 @@ export default function Wallet({ telegramId, onBack }) {
               fontSize: px(20),
               fontWeight: 900,
               lineHeight: 1,
-              color: '#60A5FA',
-              textShadow:
-                '0 0 1px rgba(255,255,255,0.95), 0 0 8px rgba(255,255,255,0.42)',
+              color: '#FFFFFF',
             }}
           >
             {user ? `${user.balance} ₽` : '0 ₽'}
@@ -250,7 +249,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             position: 'absolute',
             top: px(189),
-            left: px(8),
+            left: px(8 + SHIFT_PAYMENTS_X_PX),
             width: px(15),
             height: px(15),
           }}
@@ -259,7 +258,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             position: 'absolute',
             top: px(189),
-            left: px(25),
+            left: px(25 + SHIFT_PAYMENTS_X_PX),
             fontSize: px(16),
             fontWeight: 700,
             lineHeight: 1,
@@ -277,7 +276,7 @@ export default function Wallet({ telegramId, onBack }) {
             style={{
               position: 'absolute',
               top: px(m.y - 8),
-              left: px(m.x),
+              left: px(m.x + SHIFT_PAYMENTS_X_PX),
               width: px(149),
               height: px(67),
               borderRadius: px(15),
