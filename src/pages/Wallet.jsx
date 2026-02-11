@@ -30,10 +30,11 @@ const SHIFT_PAYMENTS_X_PX = -6; // edeniza + заголовок выбора + �
 const MONEYTASK_LOGO_TOP_PX = 18;
 
 // ——— 2. Блок баланса: позиция и размер самого блока (не цифры внутри) ———
-const BALANCE_BLOCK_TOP_PX = 80; // поднять выше → уменьшить (например 95)
+const BALANCE_BLOCK_TOP_PX = 109; // базовая вертикальная позиция (не меняет размеры)
+const BALANCE_BLOCK_TOP_OFFSET_PX = 5; // сдвиг вниз в пикселях (только опустить — меняй только это)
 const BALANCE_BLOCK_LEFT_PX = 8;
-const BALANCE_BLOCK_WIDTH_PX = 290; // сделать короче → уменьшить (например 260)
-const BALANCE_BLOCK_HEIGHT_PX = 70;
+const BALANCE_BLOCK_WIDTH_PX = 304; // сделать короче → уменьшить (например 260)
+const BALANCE_BLOCK_HEIGHT_PX = 79;
 
 // Высота фиксированной шапки (shapka + кнопки); контент ниже прокручивается
 const HEADER_HEIGHT_PX = 62;
@@ -259,7 +260,7 @@ export default function Wallet({ telegramId, onBack }) {
           <div
             style={{
               position: 'absolute',
-              top: px(contentTop(BALANCE_BLOCK_TOP_PX)),
+              top: px(contentTop(BALANCE_BLOCK_TOP_PX + BALANCE_BLOCK_TOP_OFFSET_PX)),
               left: px(BALANCE_BLOCK_LEFT_PX + SHIFT_HEADER_X_PX),
               width: px(BALANCE_BLOCK_WIDTH_PX),
               height: px(BALANCE_BLOCK_HEIGHT_PX),
