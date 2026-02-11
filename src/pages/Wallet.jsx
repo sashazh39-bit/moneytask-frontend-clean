@@ -30,7 +30,7 @@ const SHIFT_PAYMENTS_X_PX = -6; // edeniza + заголовок выбора + �
 const MONEYTASK_LOGO_TOP_PX = 18;
 
 // ——— 2. Блок баланса: позиция и размер самого блока (не цифры внутри) ———
-const BALANCE_BLOCK_TOP_PX = 109; // базовая вертикальная позиция (не меняет размеры)
+const BALANCE_BLOCK_TOP_PX = 100; // базовая вертикальная позиция (не меняет размеры)
 const BALANCE_BLOCK_TOP_OFFSET_PX = -10; // сдвиг вниз в пикселях (только опустить — меняй только это)
 const BALANCE_BLOCK_LEFT_PX = 8;
 const BALANCE_BLOCK_WIDTH_PX = 290; // сделать короче → уменьшить (например 260)
