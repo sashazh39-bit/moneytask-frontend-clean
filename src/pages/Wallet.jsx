@@ -31,7 +31,7 @@ const MONEYTASK_LOGO_TOP_PX = 18;
 
 // ——— 2. Блок баланса ———
 // Только координаты блока (меняй только их, чтобы сдвинуть весь блок):
-const BALANCE_BLOCK_TOP_PX = 80;
+const BALANCE_BLOCK_TOP_PX = 90;
 const BALANCE_BLOCK_LEFT_PX = 8;
 // Размер блока:
 const BALANCE_BLOCK_WIDTH_PX = 290;
