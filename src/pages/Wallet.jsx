@@ -325,7 +325,7 @@ export default function Wallet({ telegramId, onBack }) {
                 width: px(149),
                 height: px(67),
                 borderRadius: px(15),
-                border: method === m.id ? `${px(2)}px solid #2563eb` : `${px(1)}px solid #2A2A2A`,
+                border: `${px(2)}px solid ${method === m.id ? '#2563eb' : '#2A2A2A'}`,
                 backgroundColor: '#121929',
                 overflow: 'hidden',
                 padding: 0,
