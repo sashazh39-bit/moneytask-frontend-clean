@@ -350,7 +350,14 @@ export default function Wallet({ telegramId, onBack }) {
                 setSelectedBank(null);
                 setAmount('');
                 setAccountNumber('');
-                setTimeout(() => formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+                setTimeout(() => {
+                const scrollEl = scrollAreaRef.current;
+                const formEl = formSectionRef.current;
+                if (scrollEl && formEl) {
+                  const top = formEl.offsetTop;
+                  scrollEl.scrollTo({ top, behavior: 'smooth' });
+                }
+              }, 100);
               }}
               style={{
                 position: 'absolute',
