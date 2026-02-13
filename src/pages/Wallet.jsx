@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { apiGet } from '../api/client';
 
 import shapka from '../assets/icons/shapka.svg';
@@ -80,19 +80,28 @@ const BANKS_SBP = [
 const WITHDRAW_MIN = 2000;
 const WITHDRAW_MAX = 150000;
 
+const ACCOUNT_PLACEHOLDER_BY_METHOD = {
+  sbp: '79841388976 Без пробелов и +',
+  card: 'Номер карты',
+  piastrix: 'Номер Piastrix',
+  usdt_trc20: 'Адрес USDT (TRC20)',
+  fkwallet: 'Номер FKwallet',
+  ton: 'Адрес TON',
+};
+
 export default function Wallet({ telegramId, onBack }) {
   const [user, setUser] = useState(null);
   const [method, setMethod] = useState('sbp');
   const [loading, setLoading] = useState(true);
-  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth : BASE_WIDTH
   );
-  // Форма вывода в модалке
+  const formSectionRef = useRef(null);
+  const scrollAreaRef = useRef(null);
+  // Форма вывода (под карточками, в одном скролле)
   const [selectedBank, setSelectedBank] = useState(null);
   const [amount, setAmount] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
-  const [expeditePayment, setExpeditePayment] = useState(false);
 
   useEffect(() => {
     const onResize = () => setViewportWidth(window.innerWidth);
@@ -244,8 +253,9 @@ export default function Wallet({ telegramId, onBack }) {
         </div>
       </div>
 
-      {/* Прокручиваемая область: заголовок, блок баланса, способы вывода */}
+      {/* Прокручиваемая область: заголовок, блок баланса, способы вывода, форма */}
       <div
+        ref={scrollAreaRef}
         style={{
           flex: 1,
           minHeight: 0,
@@ -260,7 +270,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             position: 'relative',
             width: px(320),
-            minHeight: px(440),
+            minHeight: px(880),
             paddingBottom: px(100),
           }}
         >
@@ -335,11 +345,10 @@ export default function Wallet({ telegramId, onBack }) {
               type="button"
               onClick={() => {
                 setMethod(m.id);
-                setShowWithdrawModal(true);
                 setSelectedBank(null);
                 setAmount('');
                 setAccountNumber('');
-                setExpeditePayment(false);
+                setTimeout(() => formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
               }}
               style={{
                 position: 'absolute',
@@ -385,55 +394,18 @@ export default function Wallet({ telegramId, onBack }) {
               </span>
             </button>
           ))}
-        </div>
-      </div>
 
-      {/* Модальное окно «Укажите сумму» при выборе платежки */}
-      {showWithdrawModal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: '#0E101C',
-            zIndex: 200,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            overflowY: 'auto',
-          }}
-        >
-          <div style={{ width: '100%', maxWidth: px(320), flex: 1, position: 'relative', paddingBottom: px(100) }}>
-            {/* Шапка: назад + шаг 2 + заголовок */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: px(10),
-                paddingTop: px(16),
-                paddingBottom: px(16),
-                paddingLeft: px(16),
-                paddingRight: px(16),
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setShowWithdrawModal(false)}
-                aria-label="Назад"
-                style={{
-                  width: px(36),
-                  height: px(36),
-                  border: 'none',
-                  background: 'transparent',
-                  padding: 0,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <img src={headerBackActive} alt="" width={px(24)} height={px(24)} />
-              </button>
+          {/* Форма «Укажите сумму» — в том же скролле, под карточками */}
+          <div
+            ref={formSectionRef}
+            className="wallet-withdraw-form"
+            style={{
+              marginTop: px(450),
+              paddingLeft: px(16),
+              paddingRight: px(16),
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: px(10), marginBottom: px(20) }}>
               <div
                 style={{
                   width: px(32),
@@ -446,7 +418,6 @@ export default function Wallet({ telegramId, onBack }) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0,
                 }}
               >
                 2
@@ -456,182 +427,122 @@ export default function Wallet({ telegramId, onBack }) {
               </h2>
             </div>
 
-            <div style={{ paddingLeft: px(16), paddingRight: px(16) }}>
-              {/* Выберите банк — только для СБП */}
-              {method === 'sbp' && (
-                <>
-                  <div
-                    style={{
-                      background: '#121929',
-                      borderRadius: px(12),
-                      padding: px(14),
-                      marginBottom: px(12),
-                      color: '#9CA3AF',
-                      fontSize: px(14),
-                    }}
-                  >
-                    {selectedBank ? BANKS_SBP.find((b) => b.id === selectedBank)?.name : 'Выберите банк'}
-                  </div>
-                  <div style={{ display: 'flex', gap: px(8), marginBottom: px(20), flexWrap: 'wrap' }}>
-                    {BANKS_SBP.map((b) => (
-                      <button
-                        key={b.id}
-                        type="button"
-                        onClick={() => setSelectedBank(b.id)}
-                        style={{
-                          background: selectedBank === b.id ? '#1E293B' : '#121929',
-                          border: `${px(2)}px solid ${selectedBank === b.id ? '#2563eb' : '#2A2A2A'}`,
-                          borderRadius: px(12),
-                          padding: px(12),
-                          color: '#fff',
-                          fontSize: px(13),
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          minWidth: px(70),
-                        }}
-                      >
-                        {b.name}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {/* Сумма в RUB */}
-              <div style={{ marginBottom: px(16) }}>
+            {method === 'sbp' && (
+              <>
                 <div
                   style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: px(8),
+                    background: '#121929',
+                    borderRadius: px(12),
+                    padding: px(14),
+                    marginBottom: px(12),
+                    color: '#9CA3AF',
+                    fontSize: px(14),
                   }}
                 >
-                  <span style={{ color: '#9CA3AF', fontSize: px(14) }}>Сумма в RUB</span>
-                  <span style={{ color: '#6B7280', fontSize: px(12) }}>MIN {WITHDRAW_MIN.toLocaleString('ru-RU')} MAX {WITHDRAW_MAX.toLocaleString('ru-RU')}</span>
+                  {selectedBank ? BANKS_SBP.find((b) => b.id === selectedBank)?.name : 'Выберите банк'}
                 </div>
-                <input
-                  type="number"
-                  placeholder="0"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  style={{
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    background: '#121929',
-                    border: `${px(2)}px solid #2A2A2A`,
-                    borderRadius: px(12),
-                    padding: px(14),
-                    color: '#fff',
-                    fontSize: px(18),
-                    outline: 'none',
-                  }}
-                />
-              </div>
-
-              {/* Номер счёта / телефон */}
-              <div style={{ marginBottom: px(16) }}>
-                <input
-                  type="tel"
-                  placeholder="79841388976 Без пробелов и +"
-                  value={accountNumber}
-                  onChange={(e) => setAccountNumber(e.target.value.replace(/[^\d]/g, '').slice(0, 11))}
-                  style={{
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    background: '#121929',
-                    border: `${px(2)}px solid #2A2A2A`,
-                    borderRadius: px(12),
-                    padding: px(14),
-                    color: '#fff',
-                    fontSize: px(16),
-                    outline: 'none',
-                  }}
-                />
-              </div>
-
-              {/* Ускорить выплату */}
-              <div
-                style={{
-                  background: '#121929',
-                  borderRadius: px(12),
-                  padding: px(14),
-                  marginBottom: px(16),
-                  border: `${px(2)}px solid #2A2A2A`,
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: px(6) }}>
-                  <span style={{ color: '#fff', fontSize: px(15), fontWeight: 700 }}>Ускорить выплату</span>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={expeditePayment}
-                    onClick={() => setExpeditePayment(!expeditePayment)}
-                    style={{
-                      width: px(48),
-                      height: px(28),
-                      borderRadius: px(14),
-                      border: 'none',
-                      background: expeditePayment ? '#2563eb' : '#2A2A2A',
-                      cursor: 'pointer',
-                      position: 'relative',
-                    }}
-                  >
-                    <span
+                <div style={{ display: 'flex', gap: px(8), marginBottom: px(20), flexWrap: 'wrap' }}>
+                  {BANKS_SBP.map((b) => (
+                    <button
+                      key={b.id}
+                      type="button"
+                      onClick={() => setSelectedBank(b.id)}
                       style={{
-                        position: 'absolute',
-                        top: px(2),
-                        left: expeditePayment ? px(22) : px(2),
-                        width: px(24),
-                        height: px(24),
-                        borderRadius: '50%',
-                        background: '#fff',
-                        transition: 'left 0.2s',
+                        background: selectedBank === b.id ? '#1E293B' : '#121929',
+                        border: `${px(2)}px solid ${selectedBank === b.id ? '#2563eb' : '#2A2A2A'}`,
+                        borderRadius: px(12),
+                        padding: px(12),
+                        color: '#fff',
+                        fontSize: px(13),
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        minWidth: px(70),
                       }}
-                    />
-                  </button>
+                    >
+                      {b.name}
+                    </button>
+                  ))}
                 </div>
-                <div style={{ color: '#9CA3AF', fontSize: px(12), lineHeight: 1.35 }}>
-                  Выплата поступит быстрее, возможно частями. В случае изменения суммы остаток вернётся на баланс
-                </div>
-              </div>
+              </>
+            )}
 
-              {/* Доступно для вывода */}
-              <div
+            <div style={{ marginBottom: px(16) }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: px(8) }}>
+                <span style={{ color: '#9CA3AF', fontSize: px(14) }}>Сумма в RUB</span>
+                <span style={{ color: '#6B7280', fontSize: px(12) }}>MIN {WITHDRAW_MIN.toLocaleString('ru-RU')} MAX {WITHDRAW_MAX.toLocaleString('ru-RU')}</span>
+              </div>
+              <input
+                type="number"
+                placeholder="0"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
                   background: '#121929',
+                  border: `${px(2)}px solid #2A2A2A`,
                   borderRadius: px(12),
                   padding: px(14),
-                  marginBottom: px(16),
-                  border: `${px(2)}px solid #2A2A2A`,
+                  color: '#fff',
+                  fontSize: px(18),
+                  outline: 'none',
                 }}
-              >
-                <div style={{ color: '#EF4444', fontSize: px(20), fontWeight: 900 }}>{user ? `${user.balance} ₽` : '0 ₽'}</div>
-                <div style={{ color: '#9CA3AF', fontSize: px(12), marginTop: px(4) }}>Доступно для вывода</div>
-              </div>
+              />
+            </div>
 
-              {/* Сумма / К получению */}
-              <div
+            <div style={{ marginBottom: px(16) }}>
+              <input
+                type={method === 'sbp' || method === 'card' ? 'tel' : 'text'}
+                placeholder={ACCOUNT_PLACEHOLDER_BY_METHOD[method] || 'Номер или адрес'}
+                value={accountNumber}
+                onChange={(e) => setAccountNumber(method === 'sbp' || method === 'card' ? e.target.value.replace(/[^\d]/g, '').slice(0, 11) : e.target.value)}
                 style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
                   background: '#121929',
+                  border: `${px(2)}px solid #2A2A2A`,
                   borderRadius: px(12),
                   padding: px(14),
-                  border: `${px(2)}px solid #2A2A2A`,
+                  color: '#fff',
+                  fontSize: px(16),
+                  outline: 'none',
                 }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: px(10) }}>
-                  <span style={{ color: '#fff', fontSize: px(15) }}>Сумма</span>
-                  <span style={{ color: '#fff', fontSize: px(15), fontWeight: 700 }}>{amount || '0'}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff', fontSize: px(15) }}>К получению</span>
-                  <span style={{ color: '#fff', fontSize: px(15), fontWeight: 700 }}>{amount || '0'}</span>
-                </div>
+              />
+            </div>
+
+            <div
+              style={{
+                background: '#121929',
+                borderRadius: px(12),
+                padding: px(14),
+                marginBottom: px(16),
+                border: `${px(2)}px solid #2A2A2A`,
+              }}
+            >
+              <div style={{ color: '#EF4444', fontSize: px(20), fontWeight: 900 }}>{user ? `${user.balance} ₽` : '0 ₽'}</div>
+              <div style={{ color: '#9CA3AF', fontSize: px(12), marginTop: px(4) }}>Доступно для вывода</div>
+            </div>
+
+            <div
+              style={{
+                background: '#121929',
+                borderRadius: px(12),
+                padding: px(14),
+                border: `${px(2)}px solid #2A2A2A`,
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: px(10) }}>
+                <span style={{ color: '#fff', fontSize: px(15) }}>Сумма</span>
+                <span style={{ color: '#fff', fontSize: px(15), fontWeight: 700 }}>{amount || '0'}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: '#fff', fontSize: px(15) }}>К получению</span>
+                <span style={{ color: '#fff', fontSize: px(15), fontWeight: 700 }}>{amount || '0'}</span>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

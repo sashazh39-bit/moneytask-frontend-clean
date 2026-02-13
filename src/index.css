@@ -107,3 +107,8 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+
+/* Плейсхолдеры в форме вывода — серый текст */
+.wallet-withdraw-form input::placeholder {
+  color: #9CA3AF;
+}

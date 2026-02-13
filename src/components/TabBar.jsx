@@ -1,17 +1,21 @@
 import tabFont from '../assets/icons/tab-font.svg';
 import tabHome from '../assets/icons/tab-home.svg';
+import tabHomeActive from '../assets/icons/tab-home-aktive.svg';
 import tabTasks from '../assets/icons/tab-tasks.svg';
+import tabTasksActive from '../assets/icons/tab-tasks-active.svg';
 import tabWallet from '../assets/icons/tab-wallet.svg';
 import tabWithdrawals from '../assets/icons/tab-withdrawals.svg';
+import tabWithdrawalsActive from '../assets/icons/tab-withdrawals-active.svg';
 import tabInfo from '../assets/icons/tab-info.svg';
+import tabInfoActive from '../assets/icons/tab-info-active.svg';
 import { useEffect, useMemo, useState } from 'react';
 
 const tabs = [
-  { id: 'home', label: 'Главная', icon: tabHome },
-  { id: 'tasks', label: 'Задания', icon: tabTasks },
-  { id: 'wallet', label: 'Кошелёк', icon: tabWallet },
-  { id: 'withdrawals', label: 'Выплаты', icon: tabWithdrawals },
-  { id: 'info', label: 'Инфо', icon: tabInfo },
+  { id: 'home', label: 'Главная', icon: tabHome, iconActive: tabHomeActive },
+  { id: 'tasks', label: 'Задания', icon: tabTasks, iconActive: tabTasksActive },
+  { id: 'wallet', label: 'Кошелёк', icon: tabWallet, iconActive: tabWallet },
+  { id: 'withdrawals', label: 'Выплаты', icon: tabWithdrawals, iconActive: tabWithdrawalsActive },
+  { id: 'info', label: 'Инфо', icon: tabInfo, iconActive: tabInfoActive },
 ];
 
 const BASE_WIDTH = 320;
@@ -99,14 +103,11 @@ export default function TabBar({ activeTab, onChange }) {
           }}
         >
           <img
-            src={tab.icon}
+            src={activeTab === tab.id ? tab.iconActive : tab.icon}
             alt=""
             width="100%"
             height="100%"
-            style={{
-              display: 'block',
-              opacity: activeTab === tab.id ? 1 : 0.95,
-            }}
+            style={{ display: 'block' }}
           />
         </button>
       ))}
