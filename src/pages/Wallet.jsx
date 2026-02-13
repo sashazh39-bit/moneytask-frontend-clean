@@ -270,7 +270,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             position: 'relative',
             width: px(320),
-            minHeight: px(880),
+            minHeight: px(method === 'sbp' ? 1000 : 880),
             paddingBottom: px(100),
           }}
         >
@@ -422,7 +422,7 @@ export default function Wallet({ telegramId, onBack }) {
               >
                 2
               </div>
-              <h2 style={{ margin: 0, fontSize: px(22), fontWeight: 900, color: '#fff', lineHeight: 1.2 }}>
+              <h2 style={{ margin: 0, fontSize: px(16), fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
                 Укажите сумму
               </h2>
             </div>
@@ -467,9 +467,8 @@ export default function Wallet({ telegramId, onBack }) {
             )}
 
             <div style={{ marginBottom: px(16) }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: px(8) }}>
+              <div style={{ marginBottom: px(8) }}>
                 <span style={{ color: '#9CA3AF', fontSize: px(14) }}>Сумма в RUB</span>
-                <span style={{ color: '#6B7280', fontSize: px(12) }}>MIN {WITHDRAW_MIN.toLocaleString('ru-RU')} MAX {WITHDRAW_MAX.toLocaleString('ru-RU')}</span>
               </div>
               <input
                 type="number"
