@@ -178,12 +178,13 @@ export default function Wallet({ telegramId, onBack }) {
       <div
         style={{
           flexShrink: 0,
+          minHeight: px(HEADER_HEIGHT_PX),
           height: px(HEADER_HEIGHT_PX),
           display: 'flex',
           justifyContent: 'center',
         }}
       >
-        <div style={{ position: 'relative', width: px(320), height: '100%' }}>
+        <div style={{ position: 'relative', width: px(320), height: px(HEADER_HEIGHT_PX) }}>
           <img
             src={shapka}
             alt=""
@@ -262,6 +263,7 @@ export default function Wallet({ telegramId, onBack }) {
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
+          scrollbarGutter: 'stable',
           display: 'flex',
           justifyContent: 'center',
         }}
