@@ -174,16 +174,22 @@ export default function Wallet({ telegramId, onBack }) {
         flexDirection: 'column',
       }}
     >
-      {/* Фиксированная шапка: только плашка + логотип + назад + бургер */}
+      {/* Шапка фиксирована сверху — не смещается при скролле */}
       <div
         style={{
-          flexShrink: 0,
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100,
           height: px(HEADER_HEIGHT_PX),
+          overflow: 'hidden',
           display: 'flex',
           justifyContent: 'center',
+          background: '#0E101C',
         }}
       >
-        <div style={{ position: 'relative', width: px(320), height: '100%' }}>
+        <div style={{ position: 'relative', width: px(320), height: '100%', flexShrink: 0 }}>
           <img
             src={shapka}
             alt=""
@@ -253,12 +259,13 @@ export default function Wallet({ telegramId, onBack }) {
         </div>
       </div>
 
-      {/* Прокручиваемая область: заголовок, блок баланса, способы вывода, форма */}
+      {/* Прокручиваемая область: отступ сверху под шапку */}
       <div
         ref={scrollAreaRef}
         style={{
           flex: 1,
           minHeight: 0,
+          paddingTop: px(HEADER_HEIGHT_PX),
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
@@ -270,7 +277,7 @@ export default function Wallet({ telegramId, onBack }) {
           style={{
             position: 'relative',
             width: px(320),
-            minHeight: px(880),
+            minHeight: px(1050),
             paddingBottom: px(100),
           }}
         >
@@ -403,6 +410,7 @@ export default function Wallet({ telegramId, onBack }) {
               marginTop: px(450),
               paddingLeft: px(16),
               paddingRight: px(16),
+              paddingBottom: px(80),
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: px(10), marginBottom: px(20) }}>
@@ -422,7 +430,7 @@ export default function Wallet({ telegramId, onBack }) {
               >
                 2
               </div>
-              <h2 style={{ margin: 0, fontSize: px(22), fontWeight: 900, color: '#fff', lineHeight: 1.2 }}>
+              <h2 style={{ margin: 0, fontSize: px(16), fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
                 Укажите сумму
               </h2>
             </div>
@@ -467,9 +475,8 @@ export default function Wallet({ telegramId, onBack }) {
             )}
 
             <div style={{ marginBottom: px(16) }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: px(8) }}>
+              <div style={{ marginBottom: px(8) }}>
                 <span style={{ color: '#9CA3AF', fontSize: px(14) }}>Сумма в RUB</span>
-                <span style={{ color: '#6B7280', fontSize: px(12) }}>MIN {WITHDRAW_MIN.toLocaleString('ru-RU')} MAX {WITHDRAW_MAX.toLocaleString('ru-RU')}</span>
               </div>
               <input
                 type="number"
