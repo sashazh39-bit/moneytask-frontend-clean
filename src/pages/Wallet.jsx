@@ -48,6 +48,12 @@ const BALANCE_MARGIN_AFTER_AMOUNT_PX = 22; // расстояние между с
 // Высота фиксированной шапки (shapka + кнопки); контент ниже прокручивается
 const HEADER_HEIGHT_PX = 62;
 
+// Отступ после кнопки «Вывести» до таб-бара (совпадает с TabBar: bottom 5 + height 70)
+const TAB_BAR_BOTTOM_PX = 5;
+const TAB_BAR_HEIGHT_PX = 70;
+const GAP_BUTTON_TO_TABBAR_PX = 8;
+const PADDING_BOTTOM_FOR_TABBAR_PX = TAB_BAR_BOTTOM_PX + TAB_BAR_HEIGHT_PX + GAP_BUTTON_TO_TABBAR_PX;
+
 const METHODS = [
   { id: 'sbp', label: 'СБП', x: 8, y: 222 },
   { id: 'card', label: 'По номеру карты', x: 163, y: 222 },
@@ -200,11 +206,14 @@ export default function Wallet({ telegramId, onBack }) {
     <div
       style={{
         height: '100dvh',
+        width: '100%',
+        maxWidth: '100vw',
         background: '#0E101C',
         color: '#fff',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
+        position: 'relative',
       }}
     >
       {/* Фиксированная шапка: только плашка + логотип + назад + бургер */}
@@ -217,7 +226,7 @@ export default function Wallet({ telegramId, onBack }) {
           justifyContent: 'center',
         }}
       >
-        <div style={{ position: 'relative', width: px(320), height: px(HEADER_HEIGHT_PX) }}>
+        <div style={{ position: 'relative', width: px(320), minWidth: px(320), flexShrink: 0, height: px(HEADER_HEIGHT_PX) }}>
           <img
             src={shapka}
             alt=""
@@ -295,18 +304,22 @@ export default function Wallet({ telegramId, onBack }) {
           minHeight: 0,
           overflowY: 'auto',
           overflowX: 'hidden',
+          overscrollBehavior: 'none',
           WebkitOverflowScrolling: 'touch',
           scrollbarGutter: 'stable',
           display: 'flex',
           justifyContent: 'center',
+          alignItems: 'flex-start',
         }}
       >
         <div
           style={{
             position: 'relative',
             width: px(320),
+            minWidth: px(320),
+            flexShrink: 0,
             minHeight: px(method === 'sbp' ? 1000 : 880),
-            paddingBottom: px(100),
+            paddingBottom: px(PADDING_BOTTOM_FOR_TABBAR_PX),
           }}
         >
           <h1
