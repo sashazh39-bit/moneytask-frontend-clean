@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { apiGet } from '../api/client';
+import { apiGet, apiPost } from '../api/client';
 
 import shapka from '../assets/icons/shapka.svg';
 import moneyTaskLogo from '../assets/icons/MoneyTask.svg';
@@ -24,6 +24,7 @@ import plashka from '../assets/icons/plashka.svg';
 import buttonWithdraw from '../assets/icons/Rectangle 135.svg';
 
 const BASE_WIDTH = 320;
+const MIN_WITHDRAWAL = 500;
 const MIN_AMOUNT_DISPLAY = '500 ₽';
 // Настройка горизонтального смещения (в px для макета 320x568)
 const SHIFT_HEADER_X_PX = 0; // только шапка: shapka, логотип, назад, бургер
@@ -105,10 +106,11 @@ const ACCOUNT_PLACEHOLDER_BY_METHOD = {
   ton: 'Адрес TON',
 };
 
-export default function Wallet({ telegramId, onBack }) {
+export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
   const [user, setUser] = useState(null);
   const [method, setMethod] = useState('sbp');
   const [loading, setLoading] = useState(true);
+  const [withdrawing, setWithdrawing] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth : BASE_WIDTH
   );
@@ -142,6 +144,62 @@ export default function Wallet({ telegramId, onBack }) {
       alert('Ошибка загрузки кошелька: ' + e.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (!telegramId || !user) return;
+    const numAmount = Number(amount) || 0;
+    if (numAmount < MIN_WITHDRAWAL) {
+      alert(`Минимальная сумма вывода: ${MIN_WITHDRAWAL} ₽`);
+      return;
+    }
+    if (user.balance < numAmount) {
+      alert('Недостаточно средств на балансе');
+      return;
+    }
+    let detailsValue = accountNumber.trim();
+    if (method === 'sbp') {
+      if (!selectedBank) {
+        alert('Выберите банк');
+        return;
+      }
+      if (!detailsValue || detailsValue.length < 10) {
+        alert('Введите номер телефона для СБП (без +7)');
+        return;
+      }
+      const digits = detailsValue.replace(/\D/g, '');
+      if (digits.length === 10) detailsValue = '7' + digits;
+      else if (digits.length === 11 && digits.startsWith('7')) detailsValue = digits;
+      else detailsValue = digits.length >= 10 ? digits : detailsValue;
+    } else {
+      if (!detailsValue || detailsValue.length < 4) {
+        alert('Укажите реквизиты для вывода (номер карты, адрес кошелька и т.д.)');
+        return;
+      }
+    }
+    const details = { value: detailsValue };
+    if (method === 'sbp' && selectedBank) {
+      const bank = BANKS_SBP.find((b) => b.id === selectedBank);
+      if (bank) details.bankName = bank.name;
+    }
+    try {
+      setWithdrawing(true);
+      await apiPost(
+        '/api/withdrawals/request',
+        { telegramId, amount: numAmount, method, details },
+        { telegramId }
+      );
+      setAmount('');
+      setAccountNumber('');
+      setSelectedBank(null);
+      await load();
+      alert('Заявка на вывод создана. Статус можно посмотреть во вкладке «Выплаты».');
+      if (typeof onWithdrawSuccess === 'function') onWithdrawSuccess();
+    } catch (e) {
+      alert(e.message || 'Ошибка при создании заявки');
+    } finally {
+      setWithdrawing(false);
     }
   };
 
@@ -562,7 +620,8 @@ export default function Wallet({ telegramId, onBack }) {
               />
               <button
                 type="button"
-                onClick={() => {}}
+                onClick={handleWithdraw}
+                disabled={withdrawing}
                 style={{
                   position: 'absolute',
                   inset: 0,

@@ -76,7 +76,7 @@ function App() {
   const screens = {
     home: <Home {...screenProps} />,
     tasks: <Tasks {...screenProps} />,
-    wallet: <Wallet {...screenProps} onBack={() => setActiveTab('home')} />,
+    wallet: <Wallet {...screenProps} onBack={() => setActiveTab('home')} onWithdrawSuccess={() => setActiveTab('withdrawals')} />,
     withdrawals: <Withdrawals {...screenProps} />,
     info: <Info {...screenProps} />,
     admin: <Admin {...screenProps} />,
