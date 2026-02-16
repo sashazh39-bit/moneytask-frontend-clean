@@ -59,7 +59,7 @@ const SCROLL_CONTENT_MIN_HEIGHT_PX = 760;   // для способов кром�
 const SCROLL_CONTENT_MIN_HEIGHT_SBP_PX = 760; // для СБП (3 плашки, больше контента)
 
 // Резерв под скроллбар справа, чтобы контент не сдвигался при первом открытии (до появления скролла)
-const SCROLLBAR_RESERVE_PX = 17;
+const SCROLLBAR_RESERVE_PX = 0;
 
 const METHODS = [
   { id: 'sbp', label: 'СБП', x: 8, y: 222 },
