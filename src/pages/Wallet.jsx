@@ -25,9 +25,10 @@ import buttonWithdraw from '../assets/icons/Rectangle 135.svg';
 
 const BASE_WIDTH = 320;
 const MIN_AMOUNT_DISPLAY = '500 ₽';
-// Настройка горизонтального смещения групп (в px для макета 320x568)
-const SHIFT_HEADER_X_PX = -6; // shapka + стрелка + бургер + заголовок + блок баланса
-const SHIFT_PAYMENTS_X_PX = -6; // edeniza + заголовок выбора + все карточки платежей
+// Настройка горизонтального смещения (в px для макета 320x568)
+const SHIFT_HEADER_X_PX = -6; // только шапка: shapka, логотип, назад, бургер
+// Всё под шапкой (баланс, «Выберите способ», карточки, форма) — двигай одной константой:
+const SHIFT_CONTENT_X_PX = -6;
 
 // ——— 1. Высота надписи MoneyTask в шапке: меняй только это значение ———
 const MONEYTASK_LOGO_TOP_PX = 18;
@@ -313,7 +314,7 @@ export default function Wallet({ telegramId, onBack }) {
             style={{
               position: 'absolute',
               top: px(contentTop(64)),
-              left: px(15 + SHIFT_HEADER_X_PX),
+              left: px(15 + SHIFT_CONTENT_X_PX),
               margin: 0,
               fontSize: px(19),
               lineHeight: 1,
@@ -327,7 +328,7 @@ export default function Wallet({ telegramId, onBack }) {
             style={{
               position: 'absolute',
               top: px(contentTop(BALANCE_BLOCK_TOP_PX + BALANCE_BLOCK_TOP_OFFSET_PX)),
-              left: px(BALANCE_BLOCK_LEFT_PX + SHIFT_HEADER_X_PX),
+              left: px(BALANCE_BLOCK_LEFT_PX + SHIFT_CONTENT_X_PX),
               width: px(BALANCE_BLOCK_WIDTH_PX),
               height: px(BALANCE_BLOCK_HEIGHT_PX),
               borderRadius: px(8),
@@ -356,16 +357,16 @@ export default function Wallet({ telegramId, onBack }) {
             style={{
               position: 'absolute',
               top: px(contentTop(189)),
-              left: px(8 + SHIFT_PAYMENTS_X_PX),
-              width: px(15),
-              height: px(15),
+              left: px(8 + SHIFT_CONTENT_X_PX),
+              width: px(23),
+              height: px(23),
             }}
           />
           <div
             style={{
               position: 'absolute',
               top: px(contentTop(189)),
-              left: px(25 + SHIFT_PAYMENTS_X_PX),
+              left: px(25 + SHIFT_CONTENT_X_PX),
               fontSize: px(16),
               fontWeight: 700,
               lineHeight: 1,
@@ -396,7 +397,7 @@ export default function Wallet({ telegramId, onBack }) {
               style={{
                 position: 'absolute',
                 top: px(contentTop(m.y - 8)),
-                left: px(m.x + SHIFT_PAYMENTS_X_PX),
+                left: px(m.x + SHIFT_CONTENT_X_PX),
                 width: px(149),
                 height: px(67),
                 borderRadius: px(15),
@@ -445,7 +446,7 @@ export default function Wallet({ telegramId, onBack }) {
             style={{
               marginTop: px(450),
               width: px(320),
-              paddingLeft: px(8),
+              paddingLeft: px(8 + SHIFT_CONTENT_X_PX),
               paddingRight: px(8),
               boxSizing: 'border-box',
             }}
@@ -595,16 +596,20 @@ export default function Wallet({ telegramId, onBack }) {
                     style={{
                       display: 'block',
                       width: '100%',
-                      padding: px(14),
+                      height: px(54),
+                      padding: `0 ${px(14)}`,
                       marginBottom: px(8),
-                      background: selectedBank === b.id ? '#1E293B' : '#1a1f2e',
+                      backgroundImage: `url(${plashka})`,
+                      backgroundSize: '100% 100%',
+                      backgroundRepeat: 'no-repeat',
                       border: 'none',
-                      borderRadius: px(12),
+                      borderRadius: px(17),
                       color: '#fff',
-                      fontSize: px(15),
+                      fontSize: px(13),
                       fontWeight: 600,
                       textAlign: 'left',
                       cursor: 'pointer',
+                      boxSizing: 'border-box',
                     }}
                   >
                     {b.name}
