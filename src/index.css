@@ -1,4 +1,4 @@
-/* Полоса прокрутки: в ТГ WebView не скрывается — красим в цвет фона, чтобы не была видна */
+/* Полоса прокрутки: ширина 0, за экраном — не двигает компоненты */
 html, body, #root,
 .wallet-scroll-area, [data-wallet-scroll] {
   scrollbar-width: none !important;
@@ -6,22 +6,20 @@ html, body, #root,
 }
 html::-webkit-scrollbar, body::-webkit-scrollbar, #root::-webkit-scrollbar,
 .wallet-scroll-area::-webkit-scrollbar, [data-wallet-scroll]::-webkit-scrollbar {
-  width: 4px !important;
+  width: 0 !important;
   height: 0 !important;
-  background: #0E101C !important;
+  display: none !important;
+  background: transparent !important;
 }
 html::-webkit-scrollbar-track, body::-webkit-scrollbar-track, #root::-webkit-scrollbar-track,
 .wallet-scroll-area::-webkit-scrollbar-track, [data-wallet-scroll]::-webkit-scrollbar-track {
-  background: #0E101C !important;
+  width: 0 !important;
+  background: transparent !important;
 }
 html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb, #root::-webkit-scrollbar-thumb,
 .wallet-scroll-area::-webkit-scrollbar-thumb, [data-wallet-scroll]::-webkit-scrollbar-thumb {
-  background: #0E101C !important;
-  border-radius: 2px !important;
-}
-html::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover, #root::-webkit-scrollbar-thumb:hover,
-.wallet-scroll-area::-webkit-scrollbar-thumb:hover, [data-wallet-scroll]::-webkit-scrollbar-thumb:hover {
-  background: #0E101C !important;
+  width: 0 !important;
+  background: transparent !important;
 }
 
 /* Полноэкранный фон без белых рамок */

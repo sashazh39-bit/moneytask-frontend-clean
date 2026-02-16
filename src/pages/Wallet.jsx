@@ -300,24 +300,31 @@ export default function Wallet({ telegramId, onBack }) {
         </div>
       </div>
 
-      {/* Прокручиваемая область: скролл без полосы */}
+      {/* Обёртка: полоса скролла уходит за экран (overflow hidden), контент не сдвигается */}
       <div
-        ref={scrollAreaRef}
-        className="wallet-scroll-area"
-        data-wallet-scroll
         style={{
           flex: 1,
           minHeight: 0,
           width: '100%',
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          overscrollBehavior: 'none',
-          WebkitOverflowScrolling: 'touch',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
+          overflow: 'hidden',
         }}
       >
+        <div
+          ref={scrollAreaRef}
+          className="wallet-scroll-area"
+          data-wallet-scroll
+          style={{
+            height: '100%',
+            width: 'calc(100% + 20px)',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            overscrollBehavior: 'none',
+            WebkitOverflowScrolling: 'touch',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+          }}
+        >
         <div
           style={{
             position: 'relative',
@@ -575,6 +582,8 @@ export default function Wallet({ telegramId, onBack }) {
               </button>
             </div>
           </div>
+        </div>
+      </div>
 
           {/* Модалка выбора банка (СБП): листаемый список */}
           {bankPickerOpen && (
@@ -632,9 +641,7 @@ export default function Wallet({ telegramId, onBack }) {
               </div>
             </div>
           )}
-        </div>
       </div>
-
     </div>
   );
 }
