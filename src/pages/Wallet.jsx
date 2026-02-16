@@ -302,24 +302,23 @@ export default function Wallet({ telegramId, onBack }) {
         style={{
           flex: 1,
           minHeight: 0,
-          overflowY: 'auto',
+          width: '100%',
+          overflowY: 'scroll',
           overflowX: 'hidden',
           overscrollBehavior: 'none',
           WebkitOverflowScrolling: 'touch',
           scrollbarGutter: 'stable',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
+          position: 'relative',
         }}
       >
         <div
           style={{
             position: 'relative',
             width: px(320),
-            minWidth: px(320),
-            flexShrink: 0,
             minHeight: px(method === 'sbp' ? 1000 : 880),
             paddingBottom: px(PADDING_BOTTOM_FOR_TABBAR_PX),
+            marginLeft: 'auto',
+            marginRight: 'auto',
           }}
         >
           <h1
