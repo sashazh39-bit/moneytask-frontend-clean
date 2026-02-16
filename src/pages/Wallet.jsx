@@ -28,7 +28,7 @@ const MIN_AMOUNT_DISPLAY = '500 ₽';
 // Настройка горизонтального смещения (в px для макета 320x568)
 const SHIFT_HEADER_X_PX = -6; // только шапка: shapka, логотип, назад, бургер
 // Всё под шапкой (баланс, «Выберите способ», карточки, форма) — двигай одной константой:
-const SHIFT_CONTENT_X_PX = -6;
+const SHIFT_CONTENT_X_PX = 6;
 
 // ——— 1. Высота надписи MoneyTask в шапке: меняй только это значение ———
 const MONEYTASK_LOGO_TOP_PX = 18;
@@ -527,8 +527,34 @@ export default function Wallet({ telegramId, onBack }) {
             )}
             </div>
 
-            {/* Отступ снизу под фиксированную кнопку Вывести */}
-            <div style={{ height: px(50 + 12) }} />
+            {/* Кнопка Вывести — в потоке, в самом низу над таб-баром при прокрутке */}
+            <div style={{ marginTop: px(24), width: px(304), height: px(50), position: 'relative' }}>
+              <img
+                src={buttonWithdraw}
+                alt=""
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', borderRadius: px(8) }}
+              />
+              <button
+                type="button"
+                onClick={() => {}}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  background: 'transparent',
+                  color: '#fff',
+                  fontSize: px(16),
+                  fontWeight: 900,
+                  fontFamily: 'Inter, system-ui, sans-serif',
+                  lineHeight: 1,
+                  cursor: 'pointer',
+                }}
+              >
+                Вывести
+              </button>
+            </div>
           </div>
 
           {/* Модалка выбора банка (СБП): листаемый список */}
@@ -551,7 +577,7 @@ export default function Wallet({ telegramId, onBack }) {
                   width: '100%',
                   maxWidth: px(320),
                   maxHeight: '70vh',
-                  background: '#121929',
+                  background: '#0E101C',
                   borderTopLeftRadius: px(20),
                   borderTopRightRadius: px(20),
                   padding: px(16),
@@ -570,9 +596,7 @@ export default function Wallet({ telegramId, onBack }) {
                       height: px(54),
                       padding: `0 ${px(14)}`,
                       marginBottom: px(8),
-                      backgroundImage: `url(${plashka})`,
-                      backgroundSize: '100% 100%',
-                      backgroundRepeat: 'no-repeat',
+                      background: '#1E293B',
                       border: 'none',
                       borderRadius: px(17),
                       color: '#fff',
@@ -592,46 +616,6 @@ export default function Wallet({ telegramId, onBack }) {
         </div>
       </div>
 
-      {/* Кнопка Вывести — фиксирована над таб-баром, небольшой отступ */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: px(5 + 70 + 8),
-          left: '50%',
-          transform: `translateX(calc(-50% + ${px(SHIFT_CONTENT_X_PX)}px))`,
-          width: px(304),
-          height: px(50),
-          zIndex: 110,
-          pointerEvents: 'none',
-        }}
-      >
-        <img
-          src={buttonWithdraw}
-          alt=""
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', borderRadius: px(8), pointerEvents: 'none' }}
-        />
-        <button
-          type="button"
-          onClick={() => {}}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            border: 'none',
-            background: 'transparent',
-            color: '#fff',
-            fontSize: px(16),
-            fontWeight: 900,
-            fontFamily: 'Inter, system-ui, sans-serif',
-            lineHeight: 1,
-            cursor: 'pointer',
-            pointerEvents: 'auto',
-          }}
-        >
-          Вывести
-        </button>
-      </div>
     </div>
   );
 }
