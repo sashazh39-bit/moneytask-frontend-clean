@@ -117,13 +117,25 @@ button:focus-visible {
   color: #6B7280;
 }
 
-/* Кошелёк: скролл без видимой полосы прокрутки */
-.wallet-scroll-area {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+/* Кошелёк: скролл без видимой полосы прокрутки (класс и data-атрибут) */
+.wallet-scroll-area,
+[data-wallet-scroll] {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
-.wallet-scroll-area::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
+.wallet-scroll-area::-webkit-scrollbar,
+[data-wallet-scroll]::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+.wallet-scroll-area::-webkit-scrollbar-track,
+.wallet-scroll-area::-webkit-scrollbar-thumb,
+[data-wallet-scroll]::-webkit-scrollbar-track,
+[data-wallet-scroll]::-webkit-scrollbar-thumb {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }

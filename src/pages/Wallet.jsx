@@ -304,6 +304,7 @@ export default function Wallet({ telegramId, onBack }) {
       <div
         ref={scrollAreaRef}
         className="wallet-scroll-area"
+        data-wallet-scroll
         style={{
           flex: 1,
           minHeight: 0,
