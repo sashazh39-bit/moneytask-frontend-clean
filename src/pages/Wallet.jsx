@@ -28,7 +28,7 @@ const MIN_AMOUNT_DISPLAY = '500 ₽';
 // Настройка горизонтального смещения (в px для макета 320x568)
 const SHIFT_HEADER_X_PX = 0; // только шапка: shapka, логотип, назад, бургер
 // Всё под шапкой (баланс, «Выберите способ», карточки, форма) — двигай одной константой:
-const SHIFT_CONTENT_X_PX = -6;
+const SHIFT_CONTENT_X_PX = -4;
 
 // ——— 1. Высота надписи MoneyTask в шапке: меняй только это значение ———
 const MONEYTASK_LOGO_TOP_PX = 18;
