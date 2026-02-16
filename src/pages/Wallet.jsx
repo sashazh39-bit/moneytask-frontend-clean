@@ -300,19 +300,14 @@ export default function Wallet({ telegramId, onBack }) {
         </div>
       </div>
 
-      {/* Прокручиваемая область без видимой полосы скролла */}
+      {/* Контент кошелька без скролла */}
       <div
         ref={scrollAreaRef}
-        className="wallet-scroll-area"
-        data-wallet-scroll
         style={{
           flex: 1,
           minHeight: 0,
           width: '100%',
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          overscrollBehavior: 'none',
-          WebkitOverflowScrolling: 'touch',
+          overflow: 'hidden',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'flex-start',
@@ -396,14 +391,6 @@ export default function Wallet({ telegramId, onBack }) {
                 setAmount('');
                 setAccountNumber('');
                 setBankPickerOpen(false);
-                setTimeout(() => {
-                const scrollEl = scrollAreaRef.current;
-                const formEl = formSectionRef.current;
-                if (scrollEl && formEl) {
-                  const top = formEl.offsetTop;
-                  scrollEl.scrollTo({ top, behavior: 'smooth' });
-                }
-              }, 100);
               }}
               style={{
                 position: 'absolute',
