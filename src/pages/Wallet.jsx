@@ -106,6 +106,22 @@ const ACCOUNT_PLACEHOLDER_BY_METHOD = {
   ton: 'Адрес TON',
 };
 
+const METHOD_LABEL_BY_ID = {
+  sbp: 'СБП',
+  card: 'Карта',
+  piastrix: 'Piastrix',
+  usdt_trc20: 'USDT',
+  fkwallet: 'FKwallet',
+  ton: 'TON',
+};
+
+const STATUS_LABELS = {
+  pending: 'На рассмотрении',
+  processing: 'В обработке',
+  completed: 'Выплачено',
+  rejected: 'Отклонено',
+};
+
 export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
   const [user, setUser] = useState(null);
   const [method, setMethod] = useState('sbp');
@@ -121,6 +137,9 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
   const [amount, setAmount] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [bankPickerOpen, setBankPickerOpen] = useState(false);
+  const [historyMenuOpen, setHistoryMenuOpen] = useState(false);
+  const [withdrawals, setWithdrawals] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   useEffect(() => {
     const onResize = () => setViewportWidth(window.innerWidth);
@@ -201,6 +220,24 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
     } finally {
       setWithdrawing(false);
     }
+  };
+
+  const loadWithdrawals = async () => {
+    if (!telegramId) return;
+    try {
+      setHistoryLoading(true);
+      const list = await apiGet(`/api/withdrawals/user/${telegramId}`, { telegramId });
+      setWithdrawals(Array.isArray(list) ? list : []);
+    } catch (e) {
+      setWithdrawals([]);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const openHistoryMenu = () => {
+    setHistoryMenuOpen(true);
+    loadWithdrawals();
   };
 
   useEffect(() => {
@@ -337,7 +374,8 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
           </button>
           <button
             type="button"
-            aria-label="Меню"
+            aria-label="История выводов"
+            onClick={openHistoryMenu}
             style={{
               position: 'absolute',
               top: px(16),
@@ -697,6 +735,173 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
                     {b.name}
                   </button>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Меню «История выводов» по бургеру: выезжает справа */}
+          {historyMenuOpen && (
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 310,
+                display: 'flex',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.5)',
+                }}
+                onClick={() => setHistoryMenuOpen(false)}
+                aria-hidden
+              />
+              <div
+                style={{
+                  width: 'min(320px, 88vw)',
+                  maxWidth: '100%',
+                  height: '100%',
+                  background: '#0E101C',
+                  boxShadow: '-4px 0 24px rgba(0,0,0,0.4)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div
+                  style={{
+                    flexShrink: 0,
+                    padding: px(16),
+                    paddingTop: px(12),
+                    paddingBottom: px(12),
+                    borderBottom: '1px solid #1E293B',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <h2
+                    style={{
+                      margin: 0,
+                      fontSize: px(18),
+                      fontWeight: 700,
+                      color: '#fff',
+                      fontFamily: 'Inter, system-ui, sans-serif',
+                    }}
+                  >
+                    История выводов
+                  </h2>
+                  <button
+                    type="button"
+                    aria-label="Закрыть"
+                    onClick={() => setHistoryMenuOpen(false)}
+                    style={{
+                      width: px(36),
+                      height: px(36),
+                      border: 'none',
+                      background: '#1E293B',
+                      borderRadius: px(10),
+                      color: '#9CA3AF',
+                      fontSize: px(20),
+                      lineHeight: 1,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    overflowY: 'auto',
+                    padding: px(16),
+                    paddingBottom: px(24),
+                  }}
+                >
+                  {historyLoading ? (
+                    <div style={{ color: '#9CA3AF', fontSize: px(14), textAlign: 'center', padding: px(24) }}>
+                      Загрузка...
+                    </div>
+                  ) : withdrawals.length === 0 ? (
+                    <div style={{ color: '#6B7280', fontSize: px(14), textAlign: 'center', padding: px(24) }}>
+                      Пока нет заявок на вывод
+                    </div>
+                  ) : (
+                    <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                      {withdrawals.map((w) => {
+                        const statusLabel = STATUS_LABELS[w.status] || w.status;
+                        const statusColor =
+                          w.status === 'completed'
+                            ? '#22C55E'
+                            : w.status === 'rejected'
+                              ? '#EF4444'
+                              : w.status === 'processing'
+                                ? '#F59E0B'
+                                : '#94A3B8';
+                        const dateStr = w.createdAt
+                          ? new Date(w.createdAt).toLocaleDateString('ru-RU', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })
+                          : '—';
+                        return (
+                          <li
+                            key={w._id}
+                            style={{
+                              marginBottom: px(12),
+                              padding: px(14),
+                              background: '#1E293B',
+                              borderRadius: px(12),
+                              border: '1px solid rgba(255,255,255,0.06)',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'flex-start',
+                                marginBottom: px(6),
+                              }}
+                            >
+                              <span style={{ fontSize: px(16), fontWeight: 700, color: '#fff' }}>
+                                {Number(w.amount).toLocaleString('ru-RU')} ₽
+                              </span>
+                              <span
+                                style={{
+                                  fontSize: px(12),
+                                  fontWeight: 600,
+                                  color: statusColor,
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {statusLabel}
+                              </span>
+                            </div>
+                            <div style={{ fontSize: px(13), color: '#94A3B8', marginBottom: px(4) }}>
+                              {METHOD_LABEL_BY_ID[w.method] || w.method}
+                            </div>
+                            <div style={{ fontSize: px(12), color: '#6B7280' }}>{dateStr}</div>
+                            {w.status === 'rejected' && w.rejectReason && (
+                              <div style={{ fontSize: px(12), color: '#F87171', marginTop: px(6) }}>
+                                {w.rejectReason}
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
           )}
