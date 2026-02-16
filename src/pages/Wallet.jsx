@@ -55,8 +55,8 @@ const GAP_BUTTON_TO_TABBAR_PX = 8;
 const PADDING_BOTTOM_FOR_TABBAR_PX = TAB_BAR_BOTTOM_PX + TAB_BAR_HEIGHT_PX + GAP_BUTTON_TO_TABBAR_PX;
 
 // Минимальная высота контента (от неё зависит «длина» скролла): больше значение — больше прокрутка
-const SCROLL_CONTENT_MIN_HEIGHT_PX = 710;   // для способов кроме СБП
-const SCROLL_CONTENT_MIN_HEIGHT_SBP_PX = 750; // для СБП (3 плашки, больше контента)
+const SCROLL_CONTENT_MIN_HEIGHT_PX = 760;   // для способов кроме СБП
+const SCROLL_CONTENT_MIN_HEIGHT_SBP_PX = 800; // для СБП (3 плашки, больше контента)
 
 const METHODS = [
   { id: 'sbp', label: 'СБП', x: 8, y: 222 },
