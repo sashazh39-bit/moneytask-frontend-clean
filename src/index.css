@@ -117,7 +117,7 @@ button:focus-visible {
   color: #6B7280;
 }
 
-/* Кошелёк: скролл без видимой полосы прокрутки (класс и data-атрибут) */
+/* Кошелёк: полоса скролла невидима — в ТГ WebView скрываем через цвет фона */
 .wallet-scroll-area,
 [data-wallet-scroll] {
   scrollbar-width: none !important;
@@ -125,17 +125,19 @@ button:focus-visible {
 }
 .wallet-scroll-area::-webkit-scrollbar,
 [data-wallet-scroll]::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
+  width: 6px !important;
   height: 0 !important;
-  background: transparent !important;
 }
 .wallet-scroll-area::-webkit-scrollbar-track,
+[data-wallet-scroll]::-webkit-scrollbar-track {
+  background: #0E101C !important;
+}
 .wallet-scroll-area::-webkit-scrollbar-thumb,
-[data-wallet-scroll]::-webkit-scrollbar-track,
 [data-wallet-scroll]::-webkit-scrollbar-thumb {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
+  background: #0E101C !important;
+  border-radius: 3px !important;
+}
+.wallet-scroll-area::-webkit-scrollbar-thumb:hover,
+[data-wallet-scroll]::-webkit-scrollbar-thumb:hover {
+  background: #0E101C !important;
 }
