@@ -73,30 +73,20 @@ const PAY_ICONS_INACTIVE = {
   ton: payTonInactive,
 };
 
-// Топ-6 банков России для СБП (можно листать и выбрать)
 const BANKS_SBP = [
   { id: 'sber', name: 'Сбербанк' },
-  { id: 'tbank', name: 'T-Bank' },
   { id: 'vtb', name: 'ВТБ' },
+  { id: 'tbank', name: 'Тинькофф' },
   { id: 'alfa', name: 'Альфа-Банк' },
-  { id: 'rosbank', name: 'Росбанк' },
+  { id: 'gazprom', name: 'Газпромбанк' },
   { id: 'open', name: 'Открытие' },
 ];
 
 const WITHDRAW_MIN = 2000;
 const WITHDRAW_MAX = 150000;
 
-// Подпись первого поля (не СБП): номер карты, адрес и т.д.
-const FIRST_PLASHKA_LABEL_BY_METHOD = {
-  card: 'Номер карты',
-  piastrix: 'Номер Piastrix',
-  usdt_trc20: 'Адрес USDT (TRC20)',
-  fkwallet: 'Номер FKwallet',
-  ton: 'Адрес TON',
-};
-
 const ACCOUNT_PLACEHOLDER_BY_METHOD = {
-  sbp: '79841388976',
+  sbp: '79841388976 Без пробелов и +',
   card: 'Номер карты',
   piastrix: 'Номер Piastrix',
   usdt_trc20: 'Адрес USDT (TRC20)',
@@ -117,7 +107,7 @@ export default function Wallet({ telegramId, onBack }) {
   const [selectedBank, setSelectedBank] = useState(null);
   const [amount, setAmount] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
-  const [bankListOpen, setBankListOpen] = useState(false);
+  const [bankPickerOpen, setBankPickerOpen] = useState(false);
 
   useEffect(() => {
     const onResize = () => setViewportWidth(window.innerWidth);
@@ -179,6 +169,7 @@ export default function Wallet({ telegramId, onBack }) {
   // Смещение контента в прокручиваемой зоне (относительно верха шапки)
   const contentTop = (y) => y - HEADER_HEIGHT_PX;
 
+  const PLASHKA_GAP = 8;
   const plashkaStyle = {
     width: px(304),
     height: px(54),
@@ -186,19 +177,23 @@ export default function Wallet({ telegramId, onBack }) {
     backgroundImage: `url(${plashka})`,
     backgroundSize: '100% 100%',
     backgroundRepeat: 'no-repeat',
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: px(11),
-    paddingRight: px(12),
-    boxSizing: 'border-box',
-    marginBottom: px(8),
+    position: 'relative',
+    marginBottom: px(PLASHKA_GAP),
   };
-  const plashkaTextStyle = {
-    fontFamily: 'Inter, system-ui, sans-serif',
-    fontWeight: 600,
+  const plashkaInputStyle = {
+    position: 'absolute',
+    left: px(11),
+    right: px(11),
+    top: 0,
+    bottom: 0,
+    background: 'transparent',
+    border: 'none',
+    outline: 'none',
+    color: '#fff',
     fontSize: px(13),
+    fontWeight: 600,
     lineHeight: '100%',
-    color: '#E8ECF6',
+    fontFamily: 'Inter, system-ui, sans-serif',
   };
 
   return (
@@ -388,7 +383,7 @@ export default function Wallet({ telegramId, onBack }) {
                 setSelectedBank(null);
                 setAmount('');
                 setAccountNumber('');
-                setBankListOpen(false);
+                setBankPickerOpen(false);
                 setTimeout(() => {
                 const scrollEl = scrollAreaRef.current;
                 const formEl = formSectionRef.current;
@@ -443,196 +438,181 @@ export default function Wallet({ telegramId, onBack }) {
             </button>
           ))}
 
-          {/* Форма «Укажите сумму» — плашки по макету 320×895 */}
+          {/* Форма «Укажите сумму» — плашки 304×54, кнопка Вывести */}
           <div
             ref={formSectionRef}
             className="wallet-withdraw-form"
             style={{
               marginTop: px(450),
-              paddingLeft: px(8 + SHIFT_PAYMENTS_X_PX),
+              width: px(320),
+              paddingLeft: px(8),
               paddingRight: px(8),
+              boxSizing: 'border-box',
             }}
           >
-            {/* Шаг 2: dva.svg + «Укажите сумму» */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: px(10), marginBottom: px(24) }}>
-              <img src={dva} alt="" style={{ width: px(32), height: px(32), display: 'block' }} />
+            {/* Заголовок: двойка (dva.svg) + Укажите сумму */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: px(10), marginBottom: px(24), minHeight: px(28) }}>
+              <img src={dva} alt="" width={px(23)} height={px(23)} style={{ display: 'block', flexShrink: 0 }} />
               <h2 style={{ margin: 0, fontSize: px(16), fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
                 Укажите сумму
               </h2>
             </div>
 
-            {/* СБП: 3 плашки — Выберите банк (с листающимся списком), Номер телефона, Сумма в RUB */}
+            {/* Блок плашек: фиксированная высота (под 3 плашки), чтобы не дергалось при смене способа */}
+            <div style={{ minHeight: px(54 * 3 + PLASHKA_GAP * 2) }}>
+            {/* СБП: 3 плашки — Банк, Телефон, Сумма */}
             {method === 'sbp' && (
               <>
-                <div style={{ marginBottom: px(8) }}>
-                  <div style={{ ...plashkaStyle, cursor: 'pointer' }} onClick={() => setBankListOpen((o) => !o)}>
-                    <span style={plashkaTextStyle}>
-                      {selectedBank ? BANKS_SBP.find((b) => b.id === selectedBank)?.name : 'Выберите банк'}
-                    </span>
-                  </div>
-                  {bankListOpen && (
-                    <div
-                      style={{
-                        maxHeight: px(180),
-                        overflowY: 'auto',
-                        WebkitOverflowScrolling: 'touch',
-                        marginBottom: px(8),
-                        background: '#121929',
-                        borderRadius: px(17),
-                        padding: px(8),
-                      }}
-                    >
-                      {BANKS_SBP.map((b) => (
-                        <button
-                          key={b.id}
-                          type="button"
-                          onClick={() => { setSelectedBank(b.id); setBankListOpen(false); }}
-                          style={{
-                            display: 'block',
-                            width: '100%',
-                            padding: px(12),
-                            border: 'none',
-                            borderRadius: px(12),
-                            background: selectedBank === b.id ? '#1E293B' : 'transparent',
-                            color: '#fff',
-                            fontSize: px(13),
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            textAlign: 'left',
-                          }}
-                        >
-                          {b.name}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                <div style={plashkaStyle}>
+                  <button
+                    type="button"
+                    onClick={() => setBankPickerOpen(true)}
+                    style={{
+                      ...plashkaInputStyle,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      color: selectedBank ? '#fff' : '#6B7280',
+                    }}
+                  >
+                    {selectedBank ? BANKS_SBP.find((b) => b.id === selectedBank)?.name : 'Выберите банк'}
+                  </button>
                 </div>
                 <div style={plashkaStyle}>
                   <input
                     type="tel"
-                    placeholder="Номер телефона"
+                    placeholder="Номер телефона без +7"
                     value={accountNumber}
                     onChange={(e) => setAccountNumber(e.target.value.replace(/[^\d]/g, '').slice(0, 11))}
-                    style={{
-                      flex: 1,
-                      background: 'transparent',
-                      border: 'none',
-                      outline: 'none',
-                      color: '#fff',
-                      fontSize: px(13),
-                      fontWeight: 600,
-                    }}
+                    style={{ ...plashkaInputStyle, color: accountNumber ? '#fff' : undefined }}
+                    className="wallet-plashka-input"
                   />
                 </div>
                 <div style={plashkaStyle}>
                   <input
-                    type="number"
-                    placeholder="Сумма в RUB"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Сумма"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    style={{
-                      flex: 1,
-                      background: 'transparent',
-                      border: 'none',
-                      outline: 'none',
-                      color: '#fff',
-                      fontSize: px(13),
-                      fontWeight: 600,
-                    }}
+                    style={{ ...plashkaInputStyle, color: amount ? '#fff' : undefined }}
+                    className="wallet-plashka-input"
                   />
                 </div>
               </>
             )}
 
-            {/* Не СБП: 2 плашки — реквизиты (карта/адрес/номер) и Сумма в RUB */}
+            {/* Не СБП: 2 плашки — реквизит (карта/TON/...) и Сумма */}
             {method !== 'sbp' && (
               <>
                 <div style={plashkaStyle}>
                   <input
                     type={method === 'card' ? 'tel' : 'text'}
-                    placeholder={FIRST_PLASHKA_LABEL_BY_METHOD[method] || 'Реквизиты'}
+                    placeholder={ACCOUNT_PLACEHOLDER_BY_METHOD[method] || 'Реквизиты'}
                     value={accountNumber}
                     onChange={(e) => setAccountNumber(method === 'card' ? e.target.value.replace(/[^\d]/g, '').slice(0, 19) : e.target.value)}
-                    style={{
-                      flex: 1,
-                      background: 'transparent',
-                      border: 'none',
-                      outline: 'none',
-                      color: '#fff',
-                      fontSize: px(13),
-                      fontWeight: 600,
-                    }}
+                    style={{ ...plashkaInputStyle, color: accountNumber ? '#fff' : undefined }}
+                    className="wallet-plashka-input"
                   />
                 </div>
                 <div style={plashkaStyle}>
                   <input
-                    type="number"
-                    placeholder="Сумма в RUB"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Сумма"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    style={{
-                      flex: 1,
-                      background: 'transparent',
-                      border: 'none',
-                      outline: 'none',
-                      color: '#fff',
-                      fontSize: px(13),
-                      fontWeight: 600,
-                    }}
+                    style={{ ...plashkaInputStyle, color: amount ? '#fff' : undefined }}
+                    className="wallet-plashka-input"
                   />
                 </div>
               </>
             )}
+            </div>
 
-            {/* Кнопка «Вывести» — Rectangle 135.svg, текст по центру */}
-            <button
-              type="button"
-              onClick={() => {}}
-              style={{
-                marginTop: px(24),
-                width: px(304),
-                height: px(50),
-                borderRadius: px(8),
-                border: 'none',
-                padding: 0,
-                cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-                background: 'transparent',
-              }}
-            >
+            {/* Кнопка Вывести: Rectangle 135.svg + текст */}
+            <div style={{ marginTop: px(24), marginBottom: px(40), width: px(304), height: px(50), position: 'relative' }}>
               <img
                 src={buttonWithdraw}
                 alt=""
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', borderRadius: px(8) }}
+              />
+              <button
+                type="button"
+                onClick={() => {}}
                 style={{
                   position: 'absolute',
                   inset: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
-              <span
-                style={{
-                  position: 'relative',
-                  zIndex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '100%',
-                  height: '100%',
-                  fontFamily: 'Inter, system-ui, sans-serif',
-                  fontWeight: 900,
-                  fontSize: px(16),
-                  lineHeight: '100%',
+                  border: 'none',
+                  background: 'transparent',
                   color: '#fff',
+                  fontSize: px(16),
+                  fontWeight: 900,
+                  fontFamily: 'Inter, system-ui, sans-serif',
+                  lineHeight: 1,
+                  cursor: 'pointer',
                 }}
               >
                 Вывести
-              </span>
-            </button>
+              </button>
+            </div>
           </div>
+
+          {/* Модалка выбора банка (СБП): листаемый список */}
+          {bankPickerOpen && (
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0,0,0,0.5)',
+                zIndex: 300,
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+              }}
+              onClick={() => setBankPickerOpen(false)}
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  width: '100%',
+                  maxWidth: px(320),
+                  maxHeight: '70vh',
+                  background: '#121929',
+                  borderTopLeftRadius: px(20),
+                  borderTopRightRadius: px(20),
+                  padding: px(16),
+                  overflowY: 'auto',
+                }}
+              >
+                <div style={{ color: '#9CA3AF', fontSize: px(14), marginBottom: px(12) }}>Выберите банк</div>
+                {BANKS_SBP.map((b) => (
+                  <button
+                    key={b.id}
+                    type="button"
+                    onClick={() => { setSelectedBank(b.id); setBankPickerOpen(false); }}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      padding: px(14),
+                      marginBottom: px(8),
+                      background: selectedBank === b.id ? '#1E293B' : '#1a1f2e',
+                      border: 'none',
+                      borderRadius: px(12),
+                      color: '#fff',
+                      fontSize: px(15),
+                      fontWeight: 600,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {b.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -110,5 +110,9 @@ button:focus-visible {
 
 /* Плейсхолдеры в форме вывода — серый текст */
 .wallet-withdraw-form input::placeholder {
-  color: #9CA3AF;
+  color: #6B7280;
+}
+
+.wallet-plashka-input::placeholder {
+  color: #6B7280;
 }
