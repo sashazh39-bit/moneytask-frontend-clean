@@ -1,3 +1,27 @@
+/* Полоса прокрутки скрыта везде (в т.ч. в ТГ) */
+html, body, #root,
+.wallet-scroll-area, [data-wallet-scroll] {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar, #root::-webkit-scrollbar,
+.wallet-scroll-area::-webkit-scrollbar, [data-wallet-scroll]::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+html::-webkit-scrollbar-track, html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-track, body::-webkit-scrollbar-thumb,
+#root::-webkit-scrollbar-track, #root::-webkit-scrollbar-thumb,
+.wallet-scroll-area::-webkit-scrollbar-track, .wallet-scroll-area::-webkit-scrollbar-thumb,
+[data-wallet-scroll]::-webkit-scrollbar-track, [data-wallet-scroll]::-webkit-scrollbar-thumb {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
 /* Полноэкранный фон без белых рамок */
 html {
   margin: 0;
@@ -117,25 +141,3 @@ button:focus-visible {
   color: #6B7280;
 }
 
-/* Кошелёк: скролл без полосы — полоса полностью скрыта */
-.wallet-scroll-area,
-[data-wallet-scroll] {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-}
-.wallet-scroll-area::-webkit-scrollbar,
-[data-wallet-scroll]::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
-}
-.wallet-scroll-area::-webkit-scrollbar-track,
-.wallet-scroll-area::-webkit-scrollbar-thumb,
-[data-wallet-scroll]::-webkit-scrollbar-track,
-[data-wallet-scroll]::-webkit-scrollbar-thumb {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
-}
