@@ -300,14 +300,24 @@ export default function Wallet({ telegramId, onBack }) {
         </div>
       </div>
 
-      {/* Контент кошелька без скролла */}
+      {/* Область контента: скролл только программный (при выборе платежки и по кнопке «вверх») */}
       <div
         ref={scrollAreaRef}
+        className="wallet-scroll-area"
+        data-wallet-scroll
+        onWheel={(e) => e.preventDefault()}
+        onTouchMove={(e) => {
+          if (e.target.closest('input, button, textarea')) return;
+          e.preventDefault();
+        }}
         style={{
           flex: 1,
           minHeight: 0,
           width: '100%',
-          overflow: 'hidden',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          overscrollBehavior: 'none',
+          WebkitOverflowScrolling: 'touch',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'flex-start',
@@ -391,6 +401,14 @@ export default function Wallet({ telegramId, onBack }) {
                 setAmount('');
                 setAccountNumber('');
                 setBankPickerOpen(false);
+                setTimeout(() => {
+                const scrollEl = scrollAreaRef.current;
+                const formEl = formSectionRef.current;
+                if (scrollEl && formEl) {
+                  const top = formEl.offsetTop;
+                  scrollEl.scrollTo({ top, behavior: 'smooth' });
+                }
+              }, 100);
               }}
               style={{
                 position: 'absolute',
@@ -533,8 +551,33 @@ export default function Wallet({ telegramId, onBack }) {
             )}
             </div>
 
+            {/* Кнопка «стрелка вверх» — подняться к платежкам */}
+            <button
+              type="button"
+              onClick={() => scrollAreaRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+              aria-label="Наверх к способам вывода"
+              style={{
+                marginTop: px(24),
+                marginBottom: px(12),
+                width: px(48),
+                height: px(48),
+                borderRadius: '50%',
+                border: 'none',
+                background: '#1E293B',
+                color: '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <svg width={px(24)} height={px(24)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7" />
+              </svg>
+            </button>
+
             {/* Кнопка Вывести — в потоке, в самом низу над таб-баром при прокрутке */}
-            <div style={{ marginTop: px(24), width: px(304), height: px(50), position: 'relative' }}>
+            <div style={{ marginTop: 0, width: px(304), height: px(50), position: 'relative' }}>
               <img
                 src={buttonWithdraw}
                 alt=""
