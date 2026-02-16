@@ -116,3 +116,14 @@ button:focus-visible {
 .wallet-plashka-input::placeholder {
   color: #6B7280;
 }
+
+/* Кошелёк: скролл без видимой полосы прокрутки */
+.wallet-scroll-area {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.wallet-scroll-area::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}

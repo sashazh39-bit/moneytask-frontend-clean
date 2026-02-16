@@ -58,9 +58,6 @@ const PADDING_BOTTOM_FOR_TABBAR_PX = TAB_BAR_BOTTOM_PX + TAB_BAR_HEIGHT_PX + GAP
 const SCROLL_CONTENT_MIN_HEIGHT_PX = 760;   // для способов кроме СБП
 const SCROLL_CONTENT_MIN_HEIGHT_SBP_PX = 760; // для СБП (3 плашки, больше контента)
 
-// Резерв под скроллбар справа, чтобы контент не сдвигался при первом открытии (до появления скролла)
-const SCROLLBAR_RESERVE_PX = 0;
-
 const METHODS = [
   { id: 'sbp', label: 'СБП', x: 8, y: 222 },
   { id: 'card', label: 'По номеру карты', x: 163, y: 222 },
@@ -303,16 +300,15 @@ export default function Wallet({ telegramId, onBack }) {
         </div>
       </div>
 
-      {/* Прокручиваемая область: резерв под скроллбар справа — контент не сдвигается при первом открытии */}
+      {/* Прокручиваемая область без видимой полосы скролла */}
       <div
         ref={scrollAreaRef}
+        className="wallet-scroll-area"
         style={{
           flex: 1,
           minHeight: 0,
           width: '100%',
-          boxSizing: 'border-box',
-          paddingRight: px(SCROLLBAR_RESERVE_PX),
-          overflowY: 'scroll',
+          overflowY: 'auto',
           overflowX: 'hidden',
           overscrollBehavior: 'none',
           WebkitOverflowScrolling: 'touch',
