@@ -26,7 +26,7 @@ import buttonWithdraw from '../assets/icons/Rectangle 135.svg';
 const BASE_WIDTH = 320;
 const MIN_AMOUNT_DISPLAY = '500 ₽';
 // Настройка горизонтального смещения (в px для макета 320x568)
-const SHIFT_HEADER_X_PX = -6; // только шапка: shapka, логотип, назад, бургер
+const SHIFT_HEADER_X_PX = 0; // только шапка: shapka, логотип, назад, бургер
 // Всё под шапкой (баланс, «Выберите способ», карточки, форма) — двигай одной константой:
 const SHIFT_CONTENT_X_PX = 6;
 
