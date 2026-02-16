@@ -6,6 +6,7 @@ import moneyTaskLogo from '../assets/icons/MoneyTask.svg';
 import headerBackActive from '../assets/icons/header-back-active.svg';
 import headerMenu from '../assets/icons/header-menu.svg';
 import blockBalance from '../assets/icons/block-balance.svg';
+import edeniza from '../assets/icons/edeniza.svg';
 import paySbp from '../assets/icons/pay-sbp.svg';
 import paySbpInactive from '../assets/icons/pay-sbp-inactive.svg';
 import payCard from '../assets/icons/pay-card.svg';
@@ -27,7 +28,7 @@ const MIN_AMOUNT_DISPLAY = '500 ₽';
 // Настройка горизонтального смещения (в px для макета 320x568)
 const SHIFT_HEADER_X_PX = -6; // только шапка: shapka, логотип, назад, бургер
 // Всё под шапкой (баланс, «Выберите способ», карточки, форма) — двигай одной константой:
-const SHIFT_CONTENT_X_PX = 6;
+const SHIFT_CONTENT_X_PX = -6;
 
 // ——— 1. Высота надписи MoneyTask в шапке: меняй только это значение ———
 const MONEYTASK_LOGO_TOP_PX = 18;
@@ -117,8 +118,7 @@ export default function Wallet({ telegramId, onBack }) {
 
   const scale = useMemo(() => {
     const clamped = Math.min(viewportWidth, 430);
-    const s = clamped / BASE_WIDTH;
-    return Math.min(1, s);
+    return clamped / BASE_WIDTH;
   }, [viewportWidth]);
 
   const px = (value) => value * scale;
@@ -175,13 +175,9 @@ export default function Wallet({ telegramId, onBack }) {
     width: px(304),
     height: px(54),
     borderRadius: px(17),
-    backgroundImage: `url(${plashka})`,
-    backgroundSize: '100% 100%',
-    backgroundRepeat: 'no-repeat',
     position: 'relative',
     marginBottom: px(PLASHKA_GAP),
-    border: '1px solid #334155',
-    boxSizing: 'border-box',
+    overflow: 'hidden',
   };
   const plashkaInputStyle = {
     position: 'absolute',
@@ -189,6 +185,7 @@ export default function Wallet({ telegramId, onBack }) {
     right: px(11),
     top: 0,
     bottom: 0,
+    zIndex: 1,
     background: 'transparent',
     border: 'none',
     outline: 'none',
@@ -353,7 +350,7 @@ export default function Wallet({ telegramId, onBack }) {
             </div>
           </div>
 
-          {/* Пункт 1: единица + текст (параллельно пункту 2 «Укажите сумму») */}
+          {/* Пункт 1: edeniza + текст — параллельно пункту 2 (dva + Укажите сумму) */}
           <div
             style={{
               position: 'absolute',
@@ -364,23 +361,7 @@ export default function Wallet({ telegramId, onBack }) {
               gap: px(10),
             }}
           >
-            <div
-              style={{
-                width: px(23),
-                height: px(23),
-                borderRadius: px(6),
-                background: '#2563eb',
-                color: '#fff',
-                fontSize: px(14),
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              1
-            </div>
+            <img src={edeniza} alt="" width={px(23)} height={px(23)} style={{ display: 'block', flexShrink: 0 }} />
             <span style={{ fontSize: px(16), fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
               Выберите способ вывода
             </span>
@@ -476,6 +457,7 @@ export default function Wallet({ telegramId, onBack }) {
             {method === 'sbp' && (
               <>
                 <div style={plashkaStyle}>
+                  <img src={plashka} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'fill', zIndex: 0, pointerEvents: 'none' }} />
                   <button
                     type="button"
                     onClick={() => setBankPickerOpen(true)}
@@ -490,6 +472,7 @@ export default function Wallet({ telegramId, onBack }) {
                   </button>
                 </div>
                 <div style={plashkaStyle}>
+                  <img src={plashka} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'fill', zIndex: 0, pointerEvents: 'none' }} />
                   <input
                     type="tel"
                     placeholder="Номер телефона без +7"
@@ -500,6 +483,7 @@ export default function Wallet({ telegramId, onBack }) {
                   />
                 </div>
                 <div style={plashkaStyle}>
+                  <img src={plashka} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'fill', zIndex: 0, pointerEvents: 'none' }} />
                   <input
                     type="text"
                     inputMode="numeric"
@@ -517,6 +501,7 @@ export default function Wallet({ telegramId, onBack }) {
             {method !== 'sbp' && (
               <>
                 <div style={plashkaStyle}>
+                  <img src={plashka} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'fill', zIndex: 0, pointerEvents: 'none' }} />
                   <input
                     type={method === 'card' ? 'tel' : 'text'}
                     placeholder={ACCOUNT_PLACEHOLDER_BY_METHOD[method] || 'Реквизиты'}
@@ -527,6 +512,7 @@ export default function Wallet({ telegramId, onBack }) {
                   />
                 </div>
                 <div style={plashkaStyle}>
+                  <img src={plashka} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'fill', zIndex: 0, pointerEvents: 'none' }} />
                   <input
                     type="text"
                     inputMode="numeric"
@@ -541,47 +527,8 @@ export default function Wallet({ telegramId, onBack }) {
             )}
             </div>
 
-            {/* Отступ снизу, чтобы контент не уходил под фиксированную кнопку «Вывести» */}
-            <div style={{ height: px(50 + 20 + 80) }} />
-          </div>
-
-          {/* Кнопка Вывести: фиксирована над таб-баром */}
-          <div
-            style={{
-              position: 'fixed',
-              bottom: px(5 + 70 + 12),
-              left: '50%',
-              transform: `translateX(calc(-50% + ${px(SHIFT_CONTENT_X_PX)}px))`,
-              width: px(304),
-              height: px(50),
-              zIndex: 110,
-            }}
-          >
-            <img
-              src={buttonWithdraw}
-              alt=""
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', borderRadius: px(8) }}
-            />
-            <button
-              type="button"
-              onClick={() => {}}
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                border: 'none',
-                background: 'transparent',
-                color: '#fff',
-                fontSize: px(16),
-                fontWeight: 900,
-                fontFamily: 'Inter, system-ui, sans-serif',
-                lineHeight: 1,
-                cursor: 'pointer',
-              }}
-            >
-              Вывести
-            </button>
+            {/* Отступ снизу под фиксированную кнопку Вывести */}
+            <div style={{ height: px(50 + 12) }} />
           </div>
 
           {/* Модалка выбора банка (СБП): листаемый список */}
@@ -626,9 +573,8 @@ export default function Wallet({ telegramId, onBack }) {
                       backgroundImage: `url(${plashka})`,
                       backgroundSize: '100% 100%',
                       backgroundRepeat: 'no-repeat',
-                      border: '1px solid #334155',
+                      border: 'none',
                       borderRadius: px(17),
-                      boxSizing: 'border-box',
                       color: '#fff',
                       fontSize: px(13),
                       fontWeight: 600,
@@ -644,6 +590,47 @@ export default function Wallet({ telegramId, onBack }) {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Кнопка Вывести — фиксирована над таб-баром, небольшой отступ */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: px(5 + 70 + 8),
+          left: '50%',
+          transform: `translateX(calc(-50% + ${px(SHIFT_CONTENT_X_PX)}px))`,
+          width: px(304),
+          height: px(50),
+          zIndex: 110,
+          pointerEvents: 'none',
+        }}
+      >
+        <img
+          src={buttonWithdraw}
+          alt=""
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', borderRadius: px(8), pointerEvents: 'none' }}
+        />
+        <button
+          type="button"
+          onClick={() => {}}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            background: 'transparent',
+            color: '#fff',
+            fontSize: px(16),
+            fontWeight: 900,
+            fontFamily: 'Inter, system-ui, sans-serif',
+            lineHeight: 1,
+            cursor: 'pointer',
+            pointerEvents: 'auto',
+          }}
+        >
+          Вывести
+        </button>
       </div>
     </div>
   );
