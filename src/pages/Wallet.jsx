@@ -54,6 +54,10 @@ const TAB_BAR_HEIGHT_PX = 70;
 const GAP_BUTTON_TO_TABBAR_PX = 8;
 const PADDING_BOTTOM_FOR_TABBAR_PX = TAB_BAR_BOTTOM_PX + TAB_BAR_HEIGHT_PX + GAP_BUTTON_TO_TABBAR_PX;
 
+// Минимальная высота контента (от неё зависит «длина» скролла): больше значение — больше прокрутка
+const SCROLL_CONTENT_MIN_HEIGHT_PX = 700;   // для способов кроме СБП
+const SCROLL_CONTENT_MIN_HEIGHT_SBP_PX = 880; // для СБП (3 плашки, больше контента)
+
 const METHODS = [
   { id: 'sbp', label: 'СБП', x: 8, y: 222 },
   { id: 'card', label: 'По номеру карты', x: 163, y: 222 },
@@ -318,7 +322,7 @@ export default function Wallet({ telegramId, onBack }) {
             width: px(320),
             minWidth: px(320),
             flexShrink: 0,
-            minHeight: px(method === 'sbp' ? 1000 : 880),
+            minHeight: px(method === 'sbp' ? SCROLL_CONTENT_MIN_HEIGHT_SBP_PX : SCROLL_CONTENT_MIN_HEIGHT_PX),
             paddingBottom: px(PADDING_BOTTOM_FOR_TABBAR_PX),
           }}
         >
