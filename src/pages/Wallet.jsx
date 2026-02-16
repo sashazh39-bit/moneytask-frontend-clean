@@ -300,16 +300,11 @@ export default function Wallet({ telegramId, onBack }) {
         </div>
       </div>
 
-      {/* Область контента: скролл только программный (при выборе платежки и по кнопке «вверх») */}
+      {/* Прокручиваемая область: скролл без полосы */}
       <div
         ref={scrollAreaRef}
         className="wallet-scroll-area"
         data-wallet-scroll
-        onWheel={(e) => e.preventDefault()}
-        onTouchMove={(e) => {
-          if (e.target.closest('input, button, textarea')) return;
-          e.preventDefault();
-        }}
         style={{
           flex: 1,
           minHeight: 0,
@@ -551,33 +546,8 @@ export default function Wallet({ telegramId, onBack }) {
             )}
             </div>
 
-            {/* Кнопка «стрелка вверх» — подняться к платежкам */}
-            <button
-              type="button"
-              onClick={() => scrollAreaRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
-              aria-label="Наверх к способам вывода"
-              style={{
-                marginTop: px(24),
-                marginBottom: px(12),
-                width: px(48),
-                height: px(48),
-                borderRadius: '50%',
-                border: 'none',
-                background: '#1E293B',
-                color: '#fff',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <svg width={px(24)} height={px(24)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 19V5M5 12l7-7 7 7" />
-              </svg>
-            </button>
-
             {/* Кнопка Вывести — в потоке, в самом низу над таб-баром при прокрутке */}
-            <div style={{ marginTop: 0, width: px(304), height: px(50), position: 'relative' }}>
+            <div style={{ marginTop: px(24), width: px(304), height: px(50), position: 'relative' }}>
               <img
                 src={buttonWithdraw}
                 alt=""
