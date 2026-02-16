@@ -6,7 +6,6 @@ import moneyTaskLogo from '../assets/icons/MoneyTask.svg';
 import headerBackActive from '../assets/icons/header-back-active.svg';
 import headerMenu from '../assets/icons/header-menu.svg';
 import blockBalance from '../assets/icons/block-balance.svg';
-import edeniza from '../assets/icons/edeniza.svg';
 import paySbp from '../assets/icons/pay-sbp.svg';
 import paySbpInactive from '../assets/icons/pay-sbp-inactive.svg';
 import payCard from '../assets/icons/pay-card.svg';
@@ -28,7 +27,7 @@ const MIN_AMOUNT_DISPLAY = '500 ₽';
 // Настройка горизонтального смещения (в px для макета 320x568)
 const SHIFT_HEADER_X_PX = -6; // только шапка: shapka, логотип, назад, бургер
 // Всё под шапкой (баланс, «Выберите способ», карточки, форма) — двигай одной константой:
-const SHIFT_CONTENT_X_PX = -6;
+const SHIFT_CONTENT_X_PX = 6;
 
 // ——— 1. Высота надписи MoneyTask в шапке: меняй только это значение ———
 const MONEYTASK_LOGO_TOP_PX = 18;
@@ -118,7 +117,8 @@ export default function Wallet({ telegramId, onBack }) {
 
   const scale = useMemo(() => {
     const clamped = Math.min(viewportWidth, 430);
-    return clamped / BASE_WIDTH;
+    const s = clamped / BASE_WIDTH;
+    return Math.min(1, s);
   }, [viewportWidth]);
 
   const px = (value) => value * scale;
@@ -180,6 +180,8 @@ export default function Wallet({ telegramId, onBack }) {
     backgroundRepeat: 'no-repeat',
     position: 'relative',
     marginBottom: px(PLASHKA_GAP),
+    border: '1px solid #334155',
+    boxSizing: 'border-box',
   };
   const plashkaInputStyle = {
     position: 'absolute',
@@ -351,28 +353,37 @@ export default function Wallet({ telegramId, onBack }) {
             </div>
           </div>
 
-          <img
-            src={edeniza}
-            alt=""
-            style={{
-              position: 'absolute',
-              top: px(contentTop(189)),
-              left: px(8 + SHIFT_CONTENT_X_PX),
-              width: px(23),
-              height: px(23),
-            }}
-          />
+          {/* Пункт 1: единица + текст (параллельно пункту 2 «Укажите сумму») */}
           <div
             style={{
               position: 'absolute',
               top: px(contentTop(189)),
-              left: px(25 + SHIFT_CONTENT_X_PX),
-              fontSize: px(16),
-              fontWeight: 700,
-              lineHeight: 1,
+              left: px(8 + SHIFT_CONTENT_X_PX),
+              display: 'flex',
+              alignItems: 'center',
+              gap: px(10),
             }}
           >
-            Выберите способ вывода
+            <div
+              style={{
+                width: px(23),
+                height: px(23),
+                borderRadius: px(6),
+                background: '#2563eb',
+                color: '#fff',
+                fontSize: px(14),
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              1
+            </div>
+            <span style={{ fontSize: px(16), fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>
+              Выберите способ вывода
+            </span>
           </div>
 
           {METHODS.map((m) => (
@@ -530,34 +541,47 @@ export default function Wallet({ telegramId, onBack }) {
             )}
             </div>
 
-            {/* Кнопка Вывести: Rectangle 135.svg + текст */}
-            <div style={{ marginTop: px(24), marginBottom: px(40), width: px(304), height: px(50), position: 'relative' }}>
-              <img
-                src={buttonWithdraw}
-                alt=""
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', borderRadius: px(8) }}
-              />
-              <button
-                type="button"
-                onClick={() => {}}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
-                  border: 'none',
-                  background: 'transparent',
-                  color: '#fff',
-                  fontSize: px(16),
-                  fontWeight: 900,
-                  fontFamily: 'Inter, system-ui, sans-serif',
-                  lineHeight: 1,
-                  cursor: 'pointer',
-                }}
-              >
-                Вывести
-              </button>
-            </div>
+            {/* Отступ снизу, чтобы контент не уходил под фиксированную кнопку «Вывести» */}
+            <div style={{ height: px(50 + 20 + 80) }} />
+          </div>
+
+          {/* Кнопка Вывести: фиксирована над таб-баром */}
+          <div
+            style={{
+              position: 'fixed',
+              bottom: px(5 + 70 + 12),
+              left: '50%',
+              transform: `translateX(calc(-50% + ${px(SHIFT_CONTENT_X_PX)}px))`,
+              width: px(304),
+              height: px(50),
+              zIndex: 110,
+            }}
+          >
+            <img
+              src={buttonWithdraw}
+              alt=""
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', borderRadius: px(8) }}
+            />
+            <button
+              type="button"
+              onClick={() => {}}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                background: 'transparent',
+                color: '#fff',
+                fontSize: px(16),
+                fontWeight: 900,
+                fontFamily: 'Inter, system-ui, sans-serif',
+                lineHeight: 1,
+                cursor: 'pointer',
+              }}
+            >
+              Вывести
+            </button>
           </div>
 
           {/* Модалка выбора банка (СБП): листаемый список */}
@@ -602,8 +626,9 @@ export default function Wallet({ telegramId, onBack }) {
                       backgroundImage: `url(${plashka})`,
                       backgroundSize: '100% 100%',
                       backgroundRepeat: 'no-repeat',
-                      border: 'none',
+                      border: '1px solid #334155',
                       borderRadius: px(17),
+                      boxSizing: 'border-box',
                       color: '#fff',
                       fontSize: px(13),
                       fontWeight: 600,
