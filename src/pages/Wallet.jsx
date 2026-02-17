@@ -273,8 +273,8 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
     );
   }
 
-  // Смещение контента в прокручиваемой зоне (относительно верха шапки)
-  const contentTop = (y) => y - HEADER_HEIGHT_PX;
+  // Позиции контента от верха скролла (контент уезжает под шапку, сквозь неё видно)
+  const contentTop = (y) => y;
 
   const PLASHKA_GAP = 8;
   const plashkaStyle = {
@@ -308,103 +308,27 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
         height: '100dvh',
         width: '100%',
         maxWidth: '100vw',
-        background: '#0E101C',
         color: '#fff',
         overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
         position: 'relative',
       }}
     >
-      {/* Фиксированная шапка: только плашка + логотип + назад + бургер */}
+      {/* 1. Фон — последний слой, сквозь шапку видно его или контент */}
       <div
         style={{
-          flexShrink: 0,
-          minHeight: px(HEADER_HEIGHT_PX),
-          height: px(HEADER_HEIGHT_PX),
-          display: 'flex',
-          justifyContent: 'center',
+          position: 'absolute',
+          inset: 0,
+          background: '#0E101C',
+          zIndex: 0,
         }}
-      >
-        <div style={{ position: 'relative', width: px(320), minWidth: px(320), flexShrink: 0, height: px(HEADER_HEIGHT_PX) }}>
-          <img
-            src={shapka}
-            alt=""
-            style={{
-              position: 'absolute',
-              top: px(5),
-              left: px(4 + SHIFT_HEADER_X_PX),
-              width: px(312),
-              height: px(52),
-              display: 'block',
-              opacity: scrollTop > 0 ? 0.25 : 0,
-              transition: 'opacity 0.2s ease',
-            }}
-          />
-          <img
-            src={moneyTaskLogo}
-            alt="MoneyTask"
-            style={{
-              position: 'absolute',
-              top: px(MONEYTASK_LOGO_TOP_PX),
-              left: px(100 + SHIFT_HEADER_X_PX),
-              width: px(119),
-              height: px(30),
-              display: 'block',
-              opacity: 1,
-            }}
-          />
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Назад"
-            style={{
-              position: 'absolute',
-              top: px(16),
-              left: px(11 + SHIFT_HEADER_X_PX),
-              width: px(30),
-              height: px(30),
-              border: 'none',
-              background: 'transparent',
-              padding: 0,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <img src={headerBackActive} alt="" width={px(30)} height={px(30)} />
-          </button>
-          <button
-            type="button"
-            aria-label="История выводов"
-            onClick={openHistoryMenu}
-            style={{
-              position: 'absolute',
-              top: px(16),
-              left: px(279 + SHIFT_HEADER_X_PX),
-              width: px(30),
-              height: px(30),
-              border: 'none',
-              background: 'transparent',
-              padding: 0,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <img src={headerMenu} alt="" width={px(30)} height={px(30)} />
-          </button>
-        </div>
-      </div>
+      />
 
-      {/* Обёртка: полоса скролла уходит за экран (overflow hidden), контент не сдвигается */}
+      {/* 2. Скролл на всю высоту: контент уезжает под шапку */}
       <div
         style={{
-          flex: 1,
-          minHeight: 0,
-          width: '100%',
+          position: 'absolute',
+          inset: 0,
+          zIndex: 1,
           overflow: 'hidden',
         }}
       >
@@ -435,7 +359,9 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
             minWidth: px(320),
             flexShrink: 0,
             minHeight: px(method === 'sbp' ? SCROLL_CONTENT_MIN_HEIGHT_SBP_PX : SCROLL_CONTENT_MIN_HEIGHT_PX),
+            paddingTop: px(HEADER_HEIGHT_PX),
             paddingBottom: px(PADDING_BOTTOM_FOR_TABBAR_PX),
+            background: 'transparent',
           }}
         >
           <h1
@@ -686,6 +612,93 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
               </button>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* 3. Шапка поверх: сквозь прозрачную shapka видно контент или фон */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: px(HEADER_HEIGHT_PX),
+          zIndex: 2,
+          display: 'flex',
+          justifyContent: 'center',
+          pointerEvents: 'none',
+        }}
+      >
+        <div style={{ position: 'relative', width: px(320), minWidth: px(320), height: px(HEADER_HEIGHT_PX), pointerEvents: 'auto' }}>
+          <img
+            src={shapka}
+            alt=""
+            style={{
+              position: 'absolute',
+              top: px(5),
+              left: px(4 + SHIFT_HEADER_X_PX),
+              width: px(312),
+              height: px(52),
+              display: 'block',
+              opacity: scrollTop > 0 ? 0.25 : 0,
+              transition: 'opacity 0.2s ease',
+            }}
+          />
+          <img
+            src={moneyTaskLogo}
+            alt="MoneyTask"
+            style={{
+              position: 'absolute',
+              top: px(MONEYTASK_LOGO_TOP_PX),
+              left: px(100 + SHIFT_HEADER_X_PX),
+              width: px(119),
+              height: px(30),
+              display: 'block',
+              opacity: 1,
+            }}
+          />
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Назад"
+            style={{
+              position: 'absolute',
+              top: px(16),
+              left: px(11 + SHIFT_HEADER_X_PX),
+              width: px(30),
+              height: px(30),
+              border: 'none',
+              background: 'transparent',
+              padding: 0,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <img src={headerBackActive} alt="" width={px(30)} height={px(30)} />
+          </button>
+          <button
+            type="button"
+            aria-label="История выводов"
+            onClick={openHistoryMenu}
+            style={{
+              position: 'absolute',
+              top: px(16),
+              left: px(279 + SHIFT_HEADER_X_PX),
+              width: px(30),
+              height: px(30),
+              border: 'none',
+              background: 'transparent',
+              padding: 0,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <img src={headerMenu} alt="" width={px(30)} height={px(30)} />
+          </button>
         </div>
       </div>
 
