@@ -640,7 +640,7 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
               width: px(312),
               height: px(52),
               display: 'block',
-              opacity: scrollTop > 0 ? 0.50 : 0,
+              opacity: scrollTop > 0 ? 0.70 : 0,
               transition: 'opacity 0.2s ease',
             }}
           />
