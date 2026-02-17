@@ -140,6 +140,7 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
   const [historyMenuOpen, setHistoryMenuOpen] = useState(false);
   const [withdrawals, setWithdrawals] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [scrollTop, setScrollTop] = useState(0);
 
   useEffect(() => {
     const onResize = () => setViewportWidth(window.innerWidth);
@@ -336,6 +337,8 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
               width: px(312),
               height: px(52),
               display: 'block',
+              opacity: scrollTop > 0 ? 0.25 : 0,
+              transition: 'opacity 0.2s ease',
             }}
           />
           <img
@@ -409,6 +412,10 @@ export default function Wallet({ telegramId, onBack, onWithdrawSuccess }) {
           ref={scrollAreaRef}
           className="wallet-scroll-area"
           data-wallet-scroll
+          onScroll={() => {
+            const el = scrollAreaRef.current;
+            setScrollTop(el ? el.scrollTop : 0);
+          }}
           style={{
             height: '100%',
             width: 'calc(100% + 20px)',
